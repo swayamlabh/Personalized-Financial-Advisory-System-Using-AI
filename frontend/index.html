@@ -9,6 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+    <nav class="landing-navbar hidden" id="landing-navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="nav-logo-name">Capitex</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home-features">Features</a>
+                <a href="#home-about">About</a>
+                <a href="#home-contact">Contact Us</a>
+                <button id="nav-auth-btn" class="btn-primary-small">Login / Register</button>
+            </div>
+        </div>
+    </nav>
     <div class="background-blobs">
         <div class="blob shape-1"></div>
         <div class="blob shape-2"></div>
@@ -18,8 +31,7 @@
         <aside class="sidebar collapsed hidden" id="sidebar">
             <div class="sidebar-header">
                 <div class="sidebar-logo">
-                    <span class="logo-icon">💫</span>
-                    <span class="logo-text">FinAd</span>
+                    <span class="logo-text">Capitex</span>
                 </div>
                 <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
                     <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -77,6 +89,129 @@
 
         <!-- Main Content Wrapper -->
         <main class="main-content">
+            <!-- New Landing Page Section -->
+            <section id="home-section" class="hidden">
+                <!-- Hero Section -->
+                <div class="hero">
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content">
+                        <div class="hero-badge">AI-Powered Financial Platform</div>
+                        <h1 class="hero-quote">Your financial future is built today,<br>not tomorrow.</h1>
+                        <p class="hero-subtitle">Master your wealth journey with clear, data-driven insights and coaching.</p>
+                        <div class="hero-cta">
+                            <button id="hero-cta-btn" class="btn-hero-primary">Get Started Free</button>
+                            <a href="#home-features" class="btn-hero-ghost">See Features ↓</a>
+                        </div>
+                    </div>
+                    <div class="scroll-down">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"></path></svg>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div id="home-features" class="container landing-section">
+                    <h2 class="section-title">Features</h2>
+                    <div class="features-grid">
+                        <div class="glass-panel feature-card">
+                            <div class="feature-icon">🤖</div>
+                            <h3>AI Financial Coach</h3>
+                            <p>Get real-time answers to your complex financial questions with our dedicated AI coach.</p>
+                        </div>
+                        <div class="glass-panel feature-card">
+                            <div class="feature-icon">📊</div>
+                            <h3>Expense Tracking</h3>
+                            <p>Monitor your spending patterns and get automated insights to optimize your monthly budget.</p>
+                        </div>
+                        <div class="glass-panel feature-card">
+                            <div class="feature-icon">🔮</div>
+                            <h3>Future Projections</h3>
+                            <p>Visualize your financial trajectory with advanced simulations based on inflation and savings.</p>
+                        </div>
+                        <div class="glass-panel feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3>Goal Management</h3>
+                            <p>Set, track, and achieve your financial goals with personalized SIP and savings targets.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="stats-section">
+                    <div class="stats-grid container">
+                        <div class="glass-panel stat-card">
+                            <h2 class="stat-number">10k+</h2>
+                            <p class="stat-label">Users Helped</p>
+                        </div>
+                        <div class="glass-panel stat-card">
+                            <h2 class="stat-number">5k+</h2>
+                            <p class="stat-label">Active Monthly</p>
+                        </div>
+                        <div class="glass-panel stat-card">
+                            <h2 class="stat-number">3+</h2>
+                            <p class="stat-label">Years Active</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- About/Goal Section -->
+                <div id="home-about" class="about-split-section">
+                    <div class="container about-split-inner">
+                        <div class="about-text-col">
+                            <span class="section-label">Our Mission</span>
+                            <h2 class="section-title left-align">Built for people who take their finances seriously.</h2>
+                            <p class="about-text">We built FinAd because personalized financial guidance shouldn't be a luxury. Our mission is to give you clear, actionable insights—powered by data and AI—so you can make confident decisions, grow your wealth, and achieve financial independence on your own terms.</p>
+                        </div>
+                        <div class="about-visual-col">
+                            <div class="about-card-stack">
+                                <div class="about-mini-card">
+                                    <span class="mini-card-icon">📈</span>
+                                    <div>
+                                        <p class="mini-card-title">Portfolio Growth</p>
+                                        <p class="mini-card-sub">+23.4% this year</p>
+                                    </div>
+                                </div>
+                                <div class="about-mini-card accent">
+                                    <span class="mini-card-icon">🎯</span>
+                                    <div>
+                                        <p class="mini-card-title">Goal on Track</p>
+                                        <p class="mini-card-sub">Buy Car — 68% funded</p>
+                                    </div>
+                                </div>
+                                <div class="about-mini-card">
+                                    <span class="mini-card-icon">🛡️</span>
+                                    <div>
+                                        <p class="mini-card-title">Emergency Fund</p>
+                                        <p class="mini-card-sub">6 months covered</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Section -->
+                <div id="home-contact" class="container landing-section contact-section">
+                    <h2 class="section-title">Get in Touch</h2>
+                    <div class="glass-panel contact-box">
+                        <div class="contact-info">
+                            <h3>Ready to start?</h3>
+                            <p>Join our newsletter for weekly financial tips and platform updates.</p>
+                        </div>
+                        <div class="contact-form">
+                            <div class="input-group">
+                                <input type="email" placeholder="Enter your email address" class="contact-input">
+                                <button class="btn-primary-small">Subscribe</button>
+                            </div>
+                            <div class="social-links-row">
+                                <a href="#" class="social-icon">GitHub</a>
+                                <a href="#" class="social-icon">LinkedIn</a>
+                                <a href="#" class="social-icon">Twitter</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <div class="container">
         <div class="top-nav">
             <header>

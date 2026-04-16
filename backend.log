@@ -1,0 +1,26 @@
+nohup: ignoring input
+======================================
+  Starting AI Financial Advisor
+  Server: http://localhost:8000
+  API Docs: http://localhost:8000/docs
+======================================
+
+[Backend] Starting server...
+INFO:     Will watch for changes in these directories: ['/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [32585] using StatReload
+INFO:     Started server process [32587]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:46916 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46916 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44282 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:44282 - "POST /api/analyze HTTP/1.1" 200 OK

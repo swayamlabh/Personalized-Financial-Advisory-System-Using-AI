@@ -64,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const navItems = document.querySelectorAll('.nav-item');
     const aiCoachNavBtn = document.getElementById('ai-coach-nav-btn');
     const backToDashBtn = document.getElementById('back-to-dash-btn');
+    const homeSection = document.getElementById('home-section');
+    const landingNavbar = document.getElementById('landing-navbar');
+    const navAuthBtn = document.getElementById('nav-auth-btn');
     
     // Auth
     const loginContainer = document.getElementById('login-container');
@@ -112,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Router Logic ----
     function init() {
         if (!window.location.hash) {
-            window.location.hash = localStorage.getItem('token') ? '#input' : '#login';
+            window.location.hash = localStorage.getItem('token') ? '#input' : '#home';
         }
         window.addEventListener('hashchange', handleRoute);
         handleRoute();
@@ -132,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardContainer.classList.add('hidden');
         profileSection.classList.add('hidden');
         settingsSection.classList.add('hidden');
+        homeSection.classList.add('hidden');
         chatWidget.classList.add('hidden');
+        landingNavbar.classList.add('hidden');
 
         // Layout Separation logic (CleanLayout vs DashboardLayout)
         const appLayout = document.querySelector('.app-layout');
@@ -153,8 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Auth Gate
-        if (!token && hash !== '#signup' && hash !== '#login') {
-            window.location.hash = '#login';
+        if (!token && hash !== '#signup' && hash !== '#login' && hash !== '#home') {
+            window.location.hash = '#home';
             return;
         }
 
@@ -173,6 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 signupContainer.classList.add('hidden');
                 loginContainer.classList.remove('hidden');
             }
+        }
+        else if (hash === '#home') {
+            homeSection.classList.remove('hidden');
+            landingNavbar.classList.remove('hidden');
+            accountBar.classList.add('hidden');
         }
         else if (hash === '#input') {
             inputSection.classList.remove('hidden');
@@ -776,19 +786,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const healthBadge = document.getElementById('res-health');
         if (inDeficit) {
             healthBadge.innerText = '⚠️ Health: Critical — Deficit';
-            healthBadge.style.background = 'rgba(239, 68, 68, 0.25)';
+            healthBadge.style.background = 'rgba(239, 68, 68, 0.08)';
             healthBadge.style.color = 'var(--danger)';
-            healthBadge.style.border = '1px solid rgba(239,68,68,0.4)';
+            healthBadge.style.border = '1px solid rgba(239,68,68,0.2)';
         } else if (financials.health === 'Good') {
             healthBadge.innerText = `Health: ${financials.health}`;
-            healthBadge.style.background = 'rgba(16, 185, 129, 0.2)';
+            healthBadge.style.background = 'rgba(16, 185, 129, 0.1)';
             healthBadge.style.color = 'var(--accent)';
-            healthBadge.style.border = '';
+            healthBadge.style.border = '1px solid rgba(16, 185, 129, 0.2)';
         } else {
             healthBadge.innerText = `Health: ${financials.health}`;
-            healthBadge.style.background = 'rgba(239, 68, 68, 0.2)';
+            healthBadge.style.background = 'rgba(239, 68, 68, 0.08)';
             healthBadge.style.color = 'var(--danger)';
-            healthBadge.style.border = '';
+            healthBadge.style.border = '1px solid rgba(239, 68, 68, 0.2)';
         }
 
         // Deficit Critical Warning Banner (overview section)
@@ -823,10 +833,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const eStatus = document.getElementById('res-emergency-status');
         eStatus.innerText = emergency.status;
         if (emergency.status === 'Adequate') {
-            eStatus.style.background = 'rgba(16, 185, 129, 0.2)';
+            eStatus.style.background = 'rgba(16, 185, 129, 0.1)';
             eStatus.style.color = 'var(--accent)';
         } else {
-            eStatus.style.background = 'rgba(245, 158, 11, 0.2)';
+            eStatus.style.background = 'rgba(245, 158, 11, 0.1)';
             eStatus.style.color = 'var(--warning)';
         }
 
@@ -903,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3 style="color:var(--danger);margin-bottom:0.5rem;">Goals Not Achievable</h3>
                     <p style="color:var(--text-muted);line-height:1.7;">
                         Your expenses exceed your income. Financial goals cannot be calculated or achieved in a deficit state.<br>
-                        <strong style="color:#fca5a5;">Resolve your monthly deficit first before planning for any financial goal.</strong>
+                        <strong style="color:#b91c1c;">Resolve your monthly deficit first before planning for any financial goal.</strong>
                     </p>
                 </div>
             `;
@@ -1004,9 +1014,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'doughnut',
                 data: {
                     labels,
-                    datasets: [{ data: values, backgroundColor: palette.slice(0, labels.length), borderColor: 'rgba(15,23,42,0.8)', borderWidth: 2, hoverOffset: 6 }]
+                    datasets: [{ data: values, backgroundColor: palette.slice(0, labels.length), borderColor: '#ffffff', borderWidth: 2, hoverOffset: 6 }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#f8fafc', padding: 16, font: { size: 12 } } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#334155', padding: 16, font: { size: 12 } } } } }
             });
         } else {
             ctx.canvas.parentElement.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:2rem;">No expense data entered.</p>';
@@ -1078,7 +1088,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         borderColor: 'rgba(59, 130, 246, 0.9)',
                         backgroundColor: 'rgba(59, 130, 246, 0.08)',
                         pointBackgroundColor: ['#10b981', '#f59e0b', '#f59e0b', '#ef4444'],
-                        pointBorderColor: 'rgba(30, 41, 59, 0.8)',
+                        pointBorderColor: '#ffffff',
                         pointRadius: 7,
                         pointHoverRadius: 10,
                         fill: true,
@@ -1095,23 +1105,23 @@ document.addEventListener('DOMContentLoaded', () => {
                             callbacks: {
                                 label: ctx => ' ' + formatCurrency(ctx.parsed.y)
                             },
-                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
-                            titleColor: '#f8fafc',
-                            bodyColor: '#94a3b8',
-                            borderColor: 'rgba(255,255,255,0.1)',
+                            backgroundColor: '#ffffff',
+                            titleColor: '#0f172a',
+                            bodyColor: '#475569',
+                            borderColor: 'rgba(30, 58, 138, 0.1)',
                             borderWidth: 1,
                             padding: 10,
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#94a3b8', font: { size: 12 } }
+                            grid: { color: 'rgba(30, 58, 138, 0.05)' },
+                            ticks: { color: '#475569', font: { size: 12 } }
                         },
                         y: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            grid: { color: 'rgba(30, 58, 138, 0.05)' },
                             ticks: {
-                                color: '#94a3b8',
+                                color: '#475569',
                                 font: { size: 11 },
                                 callback: val => '₹' + (val >= 100000 ? (val/100000).toFixed(1) + 'L' : (val/1000).toFixed(0) + 'K')
                             },
@@ -1144,7 +1154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         'rgba(239, 68, 68, 0.8)', // Red/Expenses
                         'rgba(16, 185, 129, 0.8)' // Green/Savings
                     ],
-                    borderColor: 'rgba(30, 41, 59, 1)',
+                    borderColor: '#ffffff',
                     borderWidth: 2,
                     hoverOffset: 4
                 }]
@@ -1155,7 +1165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: { color: '#f8fafc' }
+                        labels: { color: '#334155' }
                     }
                 }
             }
@@ -1212,6 +1222,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') {
             handleChatSend();
         }
+    });
+
+    // ---- Landing Page Interactions ----
+    if (navAuthBtn) {
+        navAuthBtn.addEventListener('click', () => {
+            window.location.hash = '#login';
+        });
+    }
+
+    const heroCta = document.getElementById('hero-cta-btn');
+    if (heroCta) {
+        heroCta.addEventListener('click', () => {
+            window.location.hash = '#login';
+        });
+    }
+
+    // Smooth Scroll for landing page links
+    document.querySelectorAll('.landing-navbar a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+                targetEl.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
     });
 
     // Boot
