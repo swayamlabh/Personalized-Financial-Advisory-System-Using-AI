@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const showSignupBtn = document.getElementById('show-signup');
     const showLoginBtn = document.getElementById('show-login');
     const logoutBtn = document.getElementById('logout-btn');
-    const dashboardLogoutBtn = document.getElementById('dashboard-logout-btn');
     const sidebarLogoutBtn = document.getElementById('sidebar-logout');
     
     // Forms & Inputs
@@ -404,57 +403,71 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function handleAuth(url, payload) {
         const endpoint = `${API_BASE}${url}`;
-        console.log(`[Auth] Attempting ${url} →`, endpoint, 'payload:', { ...payload, password: '***' });
+        console.log(`[Auth] Attempting ${url} →`, endpoint, 'Payload captured:', { ...payload, password: '***' });
+
+        // Manual abort controller — AbortSignal.timeout() has limited support
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => {
+            console.warn('[Auth] ⏱️ Request timed out after 5s — aborting.');
+            controller.abort();
+        }, 5000);
 
         try {
             const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload),
-                // Short timeout so we fail fast if server is off
-                signal: AbortSignal.timeout(5000)
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
 
-            console.log(`[Auth] Response status: ${response.status}`);
+            console.log(`[Auth] Response received — HTTP status: ${response.status}`);
             let data;
             try {
                 data = await response.json();
-                console.log('[Auth] Response body:', data);
+                console.log('[Auth] Response body parsed:', data);
             } catch (parseErr) {
-                console.error('[Auth] Failed to parse JSON response:', parseErr);
+                console.error('[Auth] ❌ Failed to parse JSON response:', parseErr);
                 throw new Error('Invalid response from server.');
             }
 
             if (response.ok && data.success) {
                 BACKEND_AVAILABLE = true;
-                console.log('[Auth] ✅ Backend authentication successful.');
+                console.log('[Auth] ✅ Backend authentication successful. Token received:', data.token ? 'yes' : 'no');
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userEmail', payload.email);
                 if (data.name) {
                     localStorage.setItem('userName', data.name);
+                    console.log('[Auth] User name stored:', data.name);
                 }
                 updateAccountBar();
+                console.log('[Auth] Redirecting to #input...');
                 window.location.hash = '#input';
             } else {
                 BACKEND_AVAILABLE = true;
                 // Backend responded but credentials were wrong
+                // FastAPI HTTPException returns {"detail": "..."}, our auth returns {"error": "..."}
                 const msg = data.error || data.detail || 'Authentication failed.';
                 console.warn('[Auth] ❌ Auth rejected by backend:', msg);
                 showAuthError(msg);
             }
 
         } catch (err) {
-            // Network / connection error — backend likely down
-            const isNetworkErr = err instanceof TypeError || err.name === 'AbortError' || err.name === 'TimeoutError';
+            clearTimeout(timeoutId);
+            // Network / connection error OR abort — backend likely down
+            const isNetworkErr = err instanceof TypeError || err.name === 'AbortError';
             if (isNetworkErr) {
                 BACKEND_AVAILABLE = false;
-                console.warn('[Auth] ⚠️ Backend unreachable — switching to offline/mock mode. Error:', err.message);
+                console.warn('[Auth] ⚠️ Backend unreachable (error: ' + err.message + ') — switching to offline/mock mode.');
 
-                // ---- Fallback: Mock Authentication ----
+                // ---- Fallback: Mock Authentication via localStorage ----
                 const isMockLogin = url === '/login';
+                console.log(`[Auth] Running mock ${isMockLogin ? 'login' : 'signup'} for:`, payload.email);
                 const mockResult = isMockLogin
                     ? mockLogin(payload.email, payload.password)
                     : mockSignup(payload.name, payload.email, payload.password);
+
+                console.log('[Auth] Mock result:', { ...mockResult, token: mockResult.token ? '***' : undefined });
 
                 if (mockResult.success) {
                     localStorage.setItem('token', mockResult.token);
@@ -467,15 +480,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         offlineNotice.classList.remove('hidden');
                         setTimeout(() => offlineNotice.classList.add('hidden'), 8000);
                     }
-                    console.log('[Auth] ✅ Mock auth successful — logged in offline.');
+                    console.log('[Auth] ✅ Mock auth successful — logged in offline. Redirecting to #input...');
                     updateAccountBar();
                     window.location.hash = '#input';
                 } else {
+                    console.error('[Auth] ❌ Mock auth failed:', mockResult.error);
                     showAuthError(mockResult.error || 'Offline authentication failed.');
                 }
             } else {
                 // Server gave an unexpected error (5xx, parse fail etc.)
-                console.error('[Auth] ❌ Unexpected auth error:', err);
+                console.error('[Auth] ❌ Unexpected auth error:', err.name, err.message);
                 showAuthError('Server error: ' + err.message);
             }
         }
@@ -483,26 +497,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const payload = {
-            email: document.getElementById('login-email').value,
-            password: document.getElementById('login-password').value
-        };
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value;
+        console.log('[LoginForm] Submit triggered. Email captured:', email, '| Password length:', password.length);
+        if (!email || !password) {
+            showAuthError('Please enter both email and password.');
+            return;
+        }
+        const payload = { email, password };
         handleAuth('/login', payload);
     });
 
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const payload = {
-            name: document.getElementById('signup-name').value,
-            email: document.getElementById('signup-email').value,
-            password: document.getElementById('signup-password').value
-        };
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value;
+        console.log('[SignupForm] Submit triggered. Name:', name, '| Email:', email, '| Password length:', password.length);
+        if (!name || !email || !password) {
+            showAuthError('Please fill in all fields.');
+            return;
+        }
+        if (password.length < 6) {
+            showAuthError('Password must be at least 6 characters.');
+            return;
+        }
+        const payload = { name, email, password };
         handleAuth('/signup', payload);
     });
     
     function handleLogout() {
+        console.log('[Auth] Logout triggered. Clearing session...');
         localStorage.removeItem('token');
         localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
         window.appState = null;
         window.location.hash = '#login';
         
@@ -515,10 +543,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>Hello! I'm your AI Coach. Feel free to ask me anything about your analysis or how to improve your finances.</p>
             </div>
         `;
+        console.log('[Auth] ✅ Logged out successfully.');
     }
     
     logoutBtn.addEventListener('click', handleLogout);
-    dashboardLogoutBtn.addEventListener('click', handleLogout);
     sidebarLogoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         handleLogout();
@@ -533,12 +561,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = localStorage.getItem('userName') || 'User';
         userNameDisplay.innerText = name;
         userAvatar.innerText = name.charAt(0).toUpperCase();
-        
-        // Update new sidebar user info
-        const sidebarName = document.getElementById('sidebar-name');
-        const sidebarAvatar = document.getElementById('sidebar-avatar');
-        if (sidebarName) sidebarName.innerText = name;
-        if (sidebarAvatar) sidebarAvatar.innerText = name.charAt(0).toUpperCase();
 
         accountBar.classList.remove('hidden');
         renderNotifications();
@@ -1036,6 +1058,69 @@ document.addEventListener('DOMContentLoaded', () => {
             p.textContent = `• ${t}`;
             advList.appendChild(p);
         });
+
+        // --- Expense Trend Line Chart ---
+        const trendCanvas = document.getElementById('expenseTrendChart');
+        if (trendCanvas) {
+            if (window._expenseTrendChartInstance) {
+                window._expenseTrendChartInstance.destroy();
+            }
+            const trendCtx = trendCanvas.getContext('2d');
+            const trendLabels = ['Today', 'After 1 Year', 'After 3 Years', 'After 5 Years'];
+            const trendValues = [total, next1, next3, next5];
+            window._expenseTrendChartInstance = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: trendLabels,
+                    datasets: [{
+                        label: 'Projected Monthly Expenses',
+                        data: trendValues,
+                        borderColor: 'rgba(59, 130, 246, 0.9)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                        pointBackgroundColor: ['#10b981', '#f59e0b', '#f59e0b', '#ef4444'],
+                        pointBorderColor: 'rgba(30, 41, 59, 0.8)',
+                        pointRadius: 7,
+                        pointHoverRadius: 10,
+                        fill: true,
+                        tension: 0.4,
+                        borderWidth: 2.5,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: ctx => ' ' + formatCurrency(ctx.parsed.y)
+                            },
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#94a3b8',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1,
+                            padding: 10,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 12 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: { size: 11 },
+                                callback: val => '₹' + (val >= 100000 ? (val/100000).toFixed(1) + 'L' : (val/1000).toFixed(0) + 'K')
+                            },
+                            beginAtZero: false,
+                        }
+                    }
+                }
+            });
+        }
     }
 
     function setupChart(financials) {

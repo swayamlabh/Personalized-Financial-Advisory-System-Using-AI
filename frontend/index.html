@@ -67,13 +67,6 @@
             </nav>
 
             <div class="sidebar-footer">
-                <div class="user-mini-indicator">
-                    <div class="user-avatar-mini" id="sidebar-avatar">A</div>
-                    <div class="user-details-mini">
-                        <span class="sidebar-username" id="sidebar-name">User</span>
-                        <span class="sidebar-role">Pro Member</span>
-                    </div>
-                </div>
                 <button class="nav-item logout-btn" id="sidebar-logout">
                     <span class="nav-icon" style="color: #ef4444;">🚪</span>
                     <span class="nav-text" style="color: #ef4444;">Logout</span>
@@ -98,6 +91,7 @@
                         🔔
                         <span class="notification-badge hidden" id="notif-badge"></span>
                     </div>
+                    <div class="account-bar-divider"></div>
                     <div class="avatar" id="user-avatar">A</div>
                     <div class="account-info">
                         <span class="user-name" id="user-name-display">Loading...</span>
@@ -265,7 +259,6 @@
                 <h2>Your Financial Blueprint</h2>
                 <div class="dash-actions">
                     <button id="reset-btn" class="btn-secondary">Recalculate</button>
-                    <button id="dashboard-logout-btn" class="btn-secondary">Logout</button>
                 </div>
             </div>
 
@@ -360,11 +353,23 @@
                         <div id="exp-insights-list" class="exp-insights"></div>
                     </div>
 
-                    <!-- Trend & Advisory -->
-                    <div class="glass-panel dash-card">
-                        <h3>📈 Trend & Advisory</h3>
-                        <div id="exp-trend-content"></div>
-                        <div id="exp-advisory-list" class="advisory-list" style="margin-top:1rem;"></div>
+                    <!-- Bottom Section: Trend & Projection side-by-side -->
+                    <div style="grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 1.5rem;">
+                        <!-- Trend & Advisory -->
+                        <div class="glass-panel dash-card" style="flex: 1; min-width: 300px;">
+                            <h3>📈 Trend & Advisory</h3>
+                            <div id="exp-trend-content"></div>
+                            <div id="exp-advisory-list" class="advisory-list" style="margin-top:1rem;"></div>
+                        </div>
+
+                        <!-- Expense Trend Line Chart -->
+                        <div class="glass-panel dash-card" style="flex: 2; min-width: 400px;">
+                            <h3>📉 Expense Trend Projection</h3>
+                            <p class="trend-chart-subtitle">Projected monthly expense growth at 6% annual inflation</p>
+                            <div class="chart-container trend-chart-container">
+                                <canvas id="expenseTrendChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -23,6 +23,13 @@
 .layout-clean .main-content {
     flex-grow: 1;
     width: 100%;
+    margin-left: 0;
+}
+
+/* Dashboard layout: main content is offset by the collapsed sidebar width.
+   Sidebar expands (overlays) rightward on hover — no reflow. */
+.layout-dashboard .main-content {
+    margin-left: 64px;
 }
 
 
@@ -90,30 +97,35 @@ body {
 
 /* Sidebar Container — icons-only by default, expands on hover */
 .sidebar {
+    /* Fixed positioning: sidebar overlays content when it expands.
+       This prevents any layout reflow — expansion is purely horizontal. */
+    position: fixed;
+    left: 0;
+    top: 0;
     width: 64px;
-    background: rgba(15, 23, 42, 0.7);
+    height: 100vh;            /* always full height, never grows */
+    flex-shrink: 0;
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-right: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
-    flex-direction: column;
+    flex-direction: column;   /* children stack vertically inside */
+    overflow: hidden;         /* clips text that overflows the narrow width */
+    overflow-x: hidden;
     transition: width 0.25s ease;
-    z-index: 100;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
 }
 
-/* Expand on hover (desktop only) */
+/* Expand rightward on hover — desktop only */
 @media (min-width: 769px) {
     .sidebar:hover {
         width: 240px;
     }
 }
 
-/* Keep the old .collapsed class inert — hover handles it now */
+/* .collapsed class: keep sidebar at icon width */
 .sidebar.collapsed {
     width: 64px;
 }
@@ -125,6 +137,9 @@ body {
     justify-content: space-between;
     padding: 1.5rem 1.25rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    min-height: 72px;         /* fixed header row — never grows vertically */
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 /* Logo text and labels hide when sidebar is at narrow width (default) */
@@ -153,6 +168,7 @@ body {
 .logo-text {
     background: linear-gradient(to right, #60a5fa, #34d399);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     opacity: 0;
     transform: translateX(-6px);
@@ -213,22 +229,18 @@ body {
     font-weight: 700;
     letter-spacing: 0.1em;
     color: rgba(255, 255, 255, 0.3);
-    margin: 1rem 0 0.5rem 0.75rem;
     white-space: nowrap;
     overflow: hidden;
 
-    /* Hidden by default, shown on hover */
     opacity: 0;
-    height: 0;
-    margin-top: 0;
-    transition: opacity 0.2s ease, height 0.2s ease, margin 0.2s ease;
+    line-height: 2rem;
+    margin: 1rem 0 0.5rem 0.75rem;
+    transition: opacity 0.2s ease;
 }
 
 @media (min-width: 769px) {
     .sidebar:hover .nav-section-title {
         opacity: 1;
-        height: auto;
-        margin: 1rem 0 0.5rem 0.75rem;
     }
 }
 
@@ -270,18 +282,7 @@ body {
     box-shadow: inset 4px 0 0 var(--primary);
 }
 
-.nav-icon {
-    font-size: 1.25rem;
-    min-width: 32px;
-    display: flex;
-    justify-content: center;
-    margin-right: 0.75rem;
-    transition: transform 0.2s;
-}
-
-.nav-item:hover .nav-icon {
-    transform: scale(1.1);
-}
+/* First .nav-icon block removed — consolidated below */
 
 .nav-text {
     font-weight: 600;
@@ -306,22 +307,26 @@ body {
     justify-content: flex-start;
 }
 
+/* Icon: centered in collapsed state, gains right margin when sidebar expands */
 .nav-icon {
     font-size: 1.25rem;
     min-width: 32px;
+    width: 32px;
+    flex-shrink: 0;
     display: flex;
     justify-content: center;
-    /* Keep icon centered when sidebar is narrow */
-    margin-right: 0;
-    transition: transform 0.2s, margin-right 0.2s ease;
+    align-items: center;
+    margin-right: 0;          /* no gap in collapsed icon-only mode */
+    transition: transform 0.2s ease, margin-right 0.2s ease;
+}
+
+.nav-item:hover .nav-icon {
+    transform: scale(1.1);
 }
 
 @media (min-width: 769px) {
     .sidebar:hover .nav-icon {
-        margin-right: 0.75rem;
-    }
-    .sidebar:hover .nav-item:hover .nav-icon {
-        transform: scale(1.1);
+        margin-right: 0.75rem; /* opens space for text as width expands */
     }
 }
 
@@ -369,68 +374,9 @@ body {
 
 /* Sidebar Footer (User Area) */
 .sidebar-footer {
-    padding: 1rem;
+    padding: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     background: rgba(0,0,0,0.1);
-}
-
-/* Sidebar Footer — hide user details when narrow */
-.user-mini-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    padding: 0.5rem;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-.user-details-mini {
-    display: flex;
-    flex-direction: column;
-    /* Hidden until sidebar expands */
-    opacity: 0;
-    transform: translateX(-6px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    pointer-events: none;
-}
-
-@media (min-width: 769px) {
-    .sidebar:hover .user-details-mini {
-        opacity: 1;
-        transform: translateX(0);
-        pointer-events: auto;
-    }
-}
-
-.user-avatar-mini {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #60a5fa, #818cf8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    color: white;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-}
-
-.sidebar-username {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-light);
-    white-space: nowrap;
-}
-
-.sidebar-role {
-    font-size: 0.7rem;
-    color: var(--primary);
-    white-space: nowrap;
 }
 
 .logout-btn {
@@ -466,6 +412,7 @@ header h1 {
     font-weight: 700;
     background: linear-gradient(to right, #60a5fa, #34d399);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 0.3rem;
 }
@@ -569,7 +516,7 @@ h3 {
 .account-profile {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.6rem;
     background: rgba(30, 41, 59, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
@@ -638,10 +585,26 @@ h3 {
 .notification-icon {
     position: relative;
     font-size: 1.2rem;
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
+    margin-left: 0.25rem;
+    margin-right: 0;
     color: var(--text-muted);
     transition: color 0.3s;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Vertical separator between bell and avatar */
+.account-bar-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 2px;
+    flex-shrink: 0;
+    margin: 0 0.25rem;
 }
 
 .account-profile:hover .notification-icon {
@@ -943,6 +906,7 @@ input:focus, select:focus {
 .gradient-text {
     background: linear-gradient(to right, #f472b6, #8b5cf6);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2rem;
     margin-bottom: 0.5rem;
@@ -1000,6 +964,20 @@ input:focus, select:focus {
     width: 100%;
 }
 
+/* Taller container for the trend line chart */
+.trend-chart-container {
+    height: 300px;
+    margin-top: 1rem;
+}
+
+/* Subtitle text under the trend chart heading */
+.trend-chart-subtitle {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin: -0.25rem 0 0.5rem;
+    font-style: italic;
+}
+
 /* Action Plan */
 .action-list {
     list-style: none;
@@ -1037,17 +1015,26 @@ input:focus, select:focus {
 /* Investments Table */
 .table-responsive {
     overflow-x: auto;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 900px;
+    padding: 0 0.5rem;
+}
+
+.investment-card {
+    padding: 2rem 2.5rem;
 }
 
 .glass-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
-    text-align: left;
+    margin-top: 1.25rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
 }
 
 .glass-table th, .glass-table td {
-    padding: 1rem;
+    padding: 1.25rem 1rem;
     border-bottom: 1px solid var(--glass-border);
 }
 
@@ -1605,10 +1592,13 @@ select.readonly-input[disabled]:focus {
     border: 1px dashed rgba(239, 68, 68, 0.3);
 }
 
-/* Responsive: collapse sidebar on mobile completely */
+/* Responsive: slightly narrower sidebar on medium screens */
 @media (max-width: 900px) {
     .sidebar {
         width: 56px;
+    }
+    .layout-dashboard .main-content {
+        margin-left: 56px;
     }
 }
 
@@ -1616,14 +1606,20 @@ select.readonly-input[disabled]:focus {
     .app-layout {
         flex-direction: column;
     }
+    .layout-dashboard .main-content {
+        margin-left: 0;
+        padding-top: 60px; /* room for collapsed mobile sidebar bar */
+    }
     .sidebar {
         width: 100%;
-        height: auto;
-        position: static;
-        flex-direction: column;
+        height: 56px;     /* horizontal bar on mobile */
+        position: fixed;
+        top: 0;
+        left: 0;
+        flex-direction: row;
         border-right: none;
         border-bottom: 1px solid var(--glass-border);
-        overflow: visible;
+        overflow: hidden;
     }
     .sidebar-header {
         border-bottom: none;
