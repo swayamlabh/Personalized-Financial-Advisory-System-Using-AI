@@ -20,9 +20,51 @@
             <p>AI-Powered insights for your wealth journey</p>
         </header>
 
+        <!-- Auth Section -->
+        <section id="auth-section" class="glass-panel slide-up">
+            <div id="login-container">
+                <h2>Login to Your Dashboard</h2>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <p class="auth-toggle">Don't have an account? <span id="show-signup" class="toggle-link">Sign up</span></p>
+                </form>
+            </div>
+            
+            <div id="signup-container" class="hidden">
+                <h2>Create Your Account</h2>
+                <form id="signup-form">
+                    <div class="input-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Sign Up</button>
+                    <p class="auth-toggle">Already have an account? <span id="show-login" class="toggle-link">Login</span></p>
+                </form>
+            </div>
+        </section>
+
         <!-- Input Section -->
-        <section id="input-section" class="glass-panel slide-up">
-            <h2>Your Financial Details</h2>
+        <section id="input-section" class="glass-panel hidden">
+            <div class="dashboard-header">
+                <h2>Your Financial Details</h2>
+                <button id="logout-btn" class="btn-secondary">Logout</button>
+            </div>
             <form id="advisor-form">
                 <div class="form-grid">
                     <div class="input-group">
@@ -70,7 +112,18 @@
         <section id="dashboard-section" class="hidden">
             <div class="dashboard-header">
                 <h2>Your Financial Blueprint</h2>
-                <button id="reset-btn" class="btn-secondary">Recalculate</button>
+                <div class="dash-actions">
+                    <button id="reset-btn" class="btn-secondary">Recalculate</button>
+                    <button id="dashboard-logout-btn" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+
+            <!-- Savings Improvement Banner -->
+            <div class="glass-panel improvement-banner fade-in" id="improvement-banner" style="margin-bottom: 1.5rem;">
+                <div class="banner-content">
+                    <span class="banner-icon">💡</span>
+                    <p id="res-improvement-msg">Tip: Optimize your spending to increase savings.</p>
+                </div>
             </div>
 
             <div class="dashboard-grid">
@@ -111,23 +164,83 @@
                     </div>
                 </div>
 
+                <!-- Emergency Fund Card -->
+                <div class="glass-panel dash-card emergency-card fade-in" style="animation-delay: 0.25s;">
+                    <h3>Emergency Fund</h3>
+                    <div class="target-amount" id="res-emergency-target">₹0</div>
+                    <p class="emergency-message" id="res-emergency-msg">Analyzing...</p>
+                    <div class="stat-badge mt-auto" id="res-emergency-status">Status</div>
+                </div>
+
                 <!-- Charts Section -->
-                <div class="glass-panel dash-card chart-card fade-in" style="animation-delay: 0.3s;">
+                <div class="glass-panel dash-card chart-card fade-in" style="animation-delay: 0.3s; grid-column: span 2;">
                     <h3>50-30-20 Rule vs Reality</h3>
                     <div class="chart-container">
                         <canvas id="budgetChart"></canvas>
                     </div>
                 </div>
 
+                <!-- Action Plan -->
+                <div class="glass-panel dash-card action-card fade-in" style="animation-delay: 0.35s; grid-column: 1 / -1;">
+                    <h3>Personalized Action Plan</h3>
+                    <ol id="action-plan-list" class="action-list">
+                        <!-- Populated via JS -->
+                    </ol>
+                </div>
+
+                <!-- Investments Table -->
+                <div class="glass-panel dash-card investment-card fade-in" style="animation-delay: 0.4s; grid-column: 1 / -1;">
+                    <h3>Investment Comparisons</h3>
+                    <div class="table-responsive">
+                        <table class="glass-table">
+                            <thead>
+                                <tr>
+                                    <th>Option</th>
+                                    <th>Risk</th>
+                                    <th>Expected Return</th>
+                                    <th>Suitability</th>
+                                </tr>
+                            </thead>
+                            <tbody id="investments-tbody">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <!-- Recommendations -->
-                <div class="glass-panel dash-card recommendations-card fade-in" style="animation-delay: 0.4s; grid-column: 1 / -1;">
-                    <h3>AI Recommendations</h3>
+                <div class="glass-panel dash-card recommendations-card fade-in" style="animation-delay: 0.45s; grid-column: 1 / -1;">
+                    <h3>AI Explanations & Advice</h3>
                     <ul id="recommendations-list" class="recs-list">
                         <!-- Populated via JS -->
                     </ul>
                 </div>
             </div>
         </section>
+        
+        <footer>
+            <p class="disclaimer">⚠️ This system provides AI-based financial guidance and does not replace professional financial advice.</p>
+        </footer>
+    </div>
+
+    <!-- Chatbot Widget -->
+    <div id="chat-widget" class="hidden">
+        <button id="chat-toggle" aria-label="Toggle AI Coach">💬</button>
+        <div id="chat-window" class="glass-panel hidden">
+            <div class="chat-header">
+                <h3>AI Financial Coach</h3>
+                <button id="chat-close">✖</button>
+            </div>
+            <div class="chat-body" id="chat-messages">
+                <div class="chat-msg ai-msg">
+                    <p>Hello! I'm your AI Coach. Feel free to ask me anything about your analysis or how to improve your finances.</p>
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Ask a financial question...">
+                <button id="chat-send">Send</button>
+            </div>
+        </div>
     </div>
 
     <!-- Loading Overlay -->
