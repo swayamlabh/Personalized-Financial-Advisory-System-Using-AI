@@ -13,15 +13,120 @@
         <div class="blob shape-1"></div>
         <div class="blob shape-2"></div>
     </div>
+    <div class="app-layout">
+        <!-- Sidebar Navigation (New Architecture) -->
+        <aside class="sidebar collapsed hidden" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <span class="logo-icon">💫</span>
+                    <span class="logo-text">FinAd</span>
+                </div>
+                <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <p class="nav-section-title">MAIN</p>
+                <ul>
+                    <li class="nav-item active" data-target="sec-overview">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Overview</span>
+                        <span class="nav-tooltip">Overview</span>
+                    </li>
+                    <li class="nav-item" data-target="sec-analysis">
+                        <span class="nav-icon">🔬</span>
+                        <span class="nav-text">Analysis</span>
+                        <span class="nav-tooltip">Analysis</span>
+                    </li>
+                    <li class="nav-item" data-target="sec-expenses">
+                        <span class="nav-icon">💸</span>
+                        <span class="nav-text">Expenses</span>
+                        <span class="nav-tooltip">Expenses</span>
+                    </li>
+                </ul>
 
-    <div class="container">
-        <header>
-            <h1>Personalized Financial Advisory System</h1>
-            <p>AI-Powered insights for your wealth journey</p>
-        </header>
+                <p class="nav-section-title">TOOLS</p>
+                <ul>
+                    <li class="nav-item" data-target="sec-goals">
+                        <span class="nav-icon">🎯</span>
+                        <span class="nav-text">Goals</span>
+                        <span class="nav-tooltip">Goals</span>
+                    </li>
+                    <li class="nav-item" data-target="sec-investments">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Investments</span>
+                        <span class="nav-tooltip">Investments</span>
+                    </li>
+                    <li class="nav-item" id="ai-coach-nav-btn">
+                        <span class="nav-icon">🤖</span>
+                        <span class="nav-text">AI Coach</span>
+                        <span class="nav-tooltip">AI Coach</span>
+                    </li>
+                </ul>
+            </nav>
 
-        <!-- Auth Section -->
+            <div class="sidebar-footer">
+                <div class="user-mini-indicator">
+                    <div class="user-avatar-mini" id="sidebar-avatar">A</div>
+                    <div class="user-details-mini">
+                        <span class="sidebar-username" id="sidebar-name">User</span>
+                        <span class="sidebar-role">Pro Member</span>
+                    </div>
+                </div>
+                <button class="nav-item logout-btn" id="sidebar-logout">
+                    <span class="nav-icon" style="color: #ef4444;">🚪</span>
+                    <span class="nav-text" style="color: #ef4444;">Logout</span>
+                    <span class="nav-tooltip">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <main class="main-content">
+            <div class="container">
+        <div class="top-nav">
+            <header>
+                <h1>Personalized Financial Advisory System</h1>
+                <p>AI-Powered insights for your wealth journey</p>
+            </header>
+
+            <!-- Top Right Account Bar -->
+            <div id="account-bar" class="account-bar hidden">
+                <div class="account-profile" id="account-profile-btn">
+                    <div class="notification-icon" id="notif-btn">
+                        🔔
+                        <span class="notification-badge hidden" id="notif-badge"></span>
+                    </div>
+                    <div class="avatar" id="user-avatar">A</div>
+                    <div class="account-info">
+                        <span class="user-name" id="user-name-display">Loading...</span>
+                        <span class="account-type"><span class="pro-badge">Pro</span> Account</span>
+                    </div>
+                </div>
+                
+                <div class="dropdown-menu" id="notif-dropdown">
+                    <div class="notif-header">Notifications</div>
+                    <ul id="notif-list">
+                        <li class="empty-notif">No new notifications</li>
+                    </ul>
+                </div>
+
+                <div class="dropdown-menu" id="account-dropdown">
+                    <ul>
+                        <li><a href="#profile" id="dropdown-profile">Profile</a></li>
+                        <li><a href="#settings" id="dropdown-settings">Settings</a></li>
+                        <div class="dropdown-divider"></div>
+                        <li><a href="#" id="dropdown-logout" class="logout-link">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <section id="auth-section" class="glass-panel slide-up">
+            <!-- Inline error message (shown instead of alert) -->
+            <div id="auth-error-msg" class="auth-error-msg hidden"></div>
+
             <div id="login-container">
                 <h2>Login to Your Dashboard</h2>
                 <form id="login-form">
@@ -59,6 +164,11 @@
             </div>
         </section>
 
+        <!-- Offline Mode Notice Banner -->
+        <div id="offline-notice" class="offline-notice hidden">
+            ⚠️ <strong>Offline Mode:</strong> Backend server is not running. You are logged in locally — financial analysis requires the backend.
+        </div>
+
         <!-- Input Section -->
         <section id="input-section" class="glass-panel hidden">
             <div class="dashboard-header">
@@ -66,50 +176,91 @@
                 <button id="logout-btn" class="btn-secondary">Logout</button>
             </div>
             <form id="advisor-form">
+
+                <!-- Income & Risk -->
+                <div class="form-section-label">💰 Income & Risk</div>
                 <div class="form-grid">
                     <div class="input-group">
                         <label for="income">Monthly Income</label>
                         <input type="text" id="income" placeholder="e.g., 1.5 Lakh or 150000" required>
                     </div>
                     <div class="input-group">
-                        <label for="expenses">Monthly Expenses</label>
-                        <input type="text" id="expenses" placeholder="e.g., 80k or 80000" required>
+                        <label for="risk">Risk Appetite</label>
+                        <select id="risk" required>
+                            <option value="Low">Low (FDs, Debt)</option>
+                            <option value="Medium" selected>Medium (Balanced, Index)</option>
+                            <option value="High">High (Equity, Stocks)</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="input-group">
-                    <label for="risk">Risk Appetite</label>
-                    <select id="risk" required>
-                        <option value="Low">Low (FDs, Debt)</option>
-                        <option value="Medium" selected>Medium (Balanced, Index)</option>
-                        <option value="High">High (Equity, Stocks)</option>
-                    </select>
                 </div>
 
                 <hr class="divider">
 
-                <h3>Financial Goal</h3>
+                <!-- Categorized Expenses -->
+                <div class="form-section-label">🧾 Monthly Expenses <span class="total-live" id="exp-total-live">Total: ₹0</span></div>
                 <div class="form-grid">
                     <div class="input-group">
-                        <label for="goal-name">Goal Name</label>
-                        <input type="text" id="goal-name" placeholder="e.g., Buy a Car" required>
+                        <label for="exp-rent">🏠 House Rent</label>
+                        <input type="number" id="exp-rent" class="exp-input" placeholder="0" min="0">
                     </div>
                     <div class="input-group">
-                        <label for="goal-amount">Goal Amount</label>
-                        <input type="text" id="goal-amount" placeholder="e.g., 10 Lakh" required>
+                        <label for="exp-food">🛒 Food &amp; Groceries</label>
+                        <input type="number" id="exp-food" class="exp-input" placeholder="0" min="0">
                     </div>
                     <div class="input-group">
-                        <label for="goal-years">Years to Achieve</label>
-                        <input type="number" id="goal-years" placeholder="e.g., 5" step="0.1" required>
+                        <label for="exp-subs">📱 Subscriptions (OTT, Apps)</label>
+                        <input type="number" id="exp-subs" class="exp-input" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="exp-outing">🎭 Outings / Entertainment</label>
+                        <input type="number" id="exp-outing" class="exp-input" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="exp-transport">🚌 Transportation / Fuel</label>
+                        <input type="number" id="exp-transport" class="exp-input" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="exp-car">🚗 Car Expenses</label>
+                        <input type="number" id="exp-car" class="exp-input" placeholder="0 (enter 0 if no car)" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="exp-children">👨‍👩‍👧 Children Expenses <small>(optional)</small></label>
+                        <input type="number" id="exp-children" class="exp-input" placeholder="0" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="exp-other">💼 Other Expenses <small>(optional)</small></label>
+                        <input type="number" id="exp-other" class="exp-input" placeholder="0" min="0">
                     </div>
                 </div>
+
+                <hr class="divider">
+
+                <!-- Multiple Financial Goals -->
+                <div class="form-section-label">🎯 Financial Goals</div>
+                <div id="goals-container">
+                    <div class="goal-entry form-grid" data-index="0">
+                        <div class="input-group">
+                            <label>Goal Name</label>
+                            <input type="text" class="goal-name" placeholder="e.g., Buy a Car" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Target Amount</label>
+                            <input type="text" class="goal-amount" placeholder="e.g., 10 Lakh" required>
+                        </div>
+                        <div class="input-group">
+                            <label>Years to Achieve</label>
+                            <input type="number" class="goal-years" placeholder="e.g., 5" step="0.1" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-secondary" id="add-goal-btn" style="width:auto; margin-bottom:1rem;">+ Add Another Goal</button>
 
                 <button type="submit" class="btn-primary" id="analyze-btn">Generate AI Blueprint</button>
             </form>
         </section>
 
-        <!-- Dashboard Section (Hidden initially) -->
-        <section id="dashboard-section" class="hidden">
+        <!-- Dashboard Phases Container -->
+        <div id="dashboard-container" class="hidden">
             <div class="dashboard-header">
                 <h2>Your Financial Blueprint</h2>
                 <div class="dash-actions">
@@ -118,102 +269,279 @@
                 </div>
             </div>
 
-            <!-- Savings Improvement Banner -->
-            <div class="glass-panel improvement-banner fade-in" id="improvement-banner" style="margin-bottom: 1.5rem;">
-                <div class="banner-content">
-                    <span class="banner-icon">💡</span>
-                    <p id="res-improvement-msg">Tip: Optimize your spending to increase savings.</p>
+
+            <!-- OVERVIEW TAB -->
+            <section id="sec-overview" class="dashboard-tab active fade-in">
+                <!-- Savings Improvement Banner (only shown on Overview) -->
+                <div class="glass-panel improvement-banner fade-in" id="improvement-banner" style="margin-bottom: 1.5rem;">
+                    <div class="banner-content">
+                        <span class="banner-icon">💡</span>
+                        <p id="res-improvement-msg">Tip: Optimize your spending to increase savings.</p>
+                    </div>
+                </div>
+                <div class="dashboard-grid">
+                    <!-- Summary Card -->
+                    <div class="glass-panel dash-card summary-card fade-in">
+                        <h3>Overview</h3>
+                        <div class="stat">
+                            <span class="label">Monthly Income</span>
+                            <span class="value" id="res-income">₹0</span>
+                        </div>
+                        <div class="stat">
+                            <span class="label">Monthly Expenses</span>
+                            <span class="value" id="res-expenses">₹0</span>
+                        </div>
+                        <div class="stat highlight-stat">
+                            <span class="label">Monthly Savings</span>
+                            <span class="value" id="res-savings">₹0</span>
+                        </div>
+                        <div class="stat-badge" id="res-health">Health: Checking...</div>
+                    </div>
+                    <!-- Charts Section -->
+                    <div class="glass-panel dash-card chart-card fade-in" style="grid-column: span 2;">
+                        <h3>50-30-20 Rule vs Reality</h3>
+                        <div class="chart-container">
+                            <canvas id="budgetChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- ANALYSIS TAB -->
+            <section id="sec-analysis" class="dashboard-tab hidden fade-in">
+                <div class="dashboard-grid">
+                    <!-- ML Category -->
+                    <div class="glass-panel dash-card ml-card">
+                        <h3>Spending Profile</h3>
+                        <div class="profile-icon">🧠</div>
+                        <h4 id="ml-category" class="gradient-text">Analyzing...</h4>
+                        <p class="savings-rate">You save <strong id="res-savings-rate">0%</strong> of your income.</p>
+                    </div>
+
+                    <!-- Emergency Fund Card -->
+                    <div class="glass-panel dash-card emergency-card">
+                        <h3>Emergency Fund</h3>
+                        <div class="target-amount" id="res-emergency-target">₹0</div>
+                        <p class="emergency-message" id="res-emergency-msg">Analyzing...</p>
+                        <div class="stat-badge mt-auto" id="res-emergency-status">Status</div>
+                    </div>
+                    
+                    <!-- Action Plan -->
+                    <div class="glass-panel dash-card action-card" style="grid-column: 1 / -1;">
+                        <h3>Personalized Action Plan</h3>
+                        <ol id="action-plan-list" class="action-list"></ol>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="glass-panel dash-card recommendations-card" style="grid-column: 1 / -1;">
+                        <h3>AI Explanations & Advice</h3>
+                        <ul id="recommendations-list" class="recs-list"></ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- EXPENSES TAB -->
+            <section id="sec-expenses" class="dashboard-tab hidden fade-in">
+                <!-- Alerts Bar -->
+                <div id="exp-alerts-container" style="margin-bottom:1.5rem;"></div>
+
+                <div class="dashboard-grid">
+                    <!-- Breakdown Chart -->
+                    <div class="glass-panel dash-card" style="grid-column: span 2;">
+                        <h3>📊 Expense Breakdown</h3>
+                        <div class="chart-container">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Category Cards -->
+                    <div class="glass-panel dash-card">
+                        <h3>🔍 Category Insights</h3>
+                        <div id="exp-insights-list" class="exp-insights"></div>
+                    </div>
+
+                    <!-- Trend & Advisory -->
+                    <div class="glass-panel dash-card">
+                        <h3>📈 Trend & Advisory</h3>
+                        <div id="exp-trend-content"></div>
+                        <div id="exp-advisory-list" class="advisory-list" style="margin-top:1rem;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- GOALS TAB -->
+            <section id="sec-goals" class="dashboard-tab hidden fade-in">
+                <div id="goals-results-container" class="dashboard-grid"></div>
+            </section>
+            
+            <!-- INVESTMENTS TAB -->
+            <section id="sec-investments" class="dashboard-tab hidden fade-in">
+                <div class="dashboard-grid">
+                    <!-- Investments Table -->
+                    <div class="glass-panel dash-card investment-card" style="grid-column: 1 / -1;">
+                        <h3>Investment Comparisons</h3>
+                        <div class="table-responsive">
+                            <table class="glass-table">
+                                <thead>
+                                    <tr>
+                                        <th>Option</th>
+                                        <th>Risk</th>
+                                        <th>Expected Return</th>
+                                        <th>Suitability</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="investments-tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Profile Section -->
+        <section id="profile-section" class="glass-panel hidden fade-in" style="margin-bottom: 2rem;">
+            <div class="dashboard-header">
+                <h2>User Profile</h2>
+                <div class="dash-actions">
+                    <button class="btn-secondary" id="prof-edit-btn">Edit Profile</button>
+                    <button class="btn-primary hidden" id="prof-save-btn" style="margin-top:0;">Save Changes</button>
                 </div>
             </div>
-
-            <div class="dashboard-grid">
-                <!-- Summary Card -->
-                <div class="glass-panel dash-card summary-card fade-in">
-                    <h3>Overview</h3>
-                    <div class="stat">
-                        <span class="label">Monthly Income</span>
-                        <span class="value" id="res-income">₹0</span>
+            <form id="profile-form">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="prof-name">Full Name</label>
+                        <input type="text" id="prof-name" class="readonly-input" readonly>
                     </div>
-                    <div class="stat">
-                        <span class="label">Monthly Expenses</span>
-                        <span class="value" id="res-expenses">₹0</span>
+                    <div class="input-group">
+                        <label for="prof-email">Email Address</label>
+                        <input type="email" id="prof-email" class="readonly-input" readonly>
                     </div>
-                    <div class="stat highlight-stat">
-                        <span class="label">Monthly Savings</span>
-                        <span class="value" id="res-savings">₹0</span>
+                    <div class="input-group">
+                        <label for="prof-job">Job Title / Profession</label>
+                        <input type="text" id="prof-job" class="readonly-input" readonly placeholder="e.g., Software Engineer">
                     </div>
-                    <div class="stat-badge" id="res-health">Health: Checking...</div>
-                </div>
-
-                <!-- ML Category -->
-                <div class="glass-panel dash-card ml-card fade-in" style="animation-delay: 0.1s;">
-                    <h3>Spending Profile</h3>
-                    <div class="profile-icon">🧠</div>
-                    <h4 id="ml-category" class="gradient-text">Analyzing...</h4>
-                    <p class="savings-rate">You save <strong id="res-savings-rate">0%</strong> of your income.</p>
-                </div>
-
-                <!-- Goal Feasibility -->
-                <div class="glass-panel dash-card goal-card fade-in" style="animation-delay: 0.2s;">
-                    <h3 id="res-goal-name">Your Goal</h3>
-                    <div class="goal-amount-display" id="res-goal-amount">₹0</div>
-                    <p class="goal-message" id="res-goal-message">Analyzing feasibility...</p>
-                    <div class="required-sip">
-                        <span>Required SIP:</span>
-                        <h4 id="res-goal-monthly">₹0 <small>/ mo</small></h4>
+                    <div class="input-group">
+                        <label for="prof-age">Age</label>
+                        <input type="number" id="prof-age" class="readonly-input" readonly placeholder="e.g., 28">
                     </div>
-                </div>
-
-                <!-- Emergency Fund Card -->
-                <div class="glass-panel dash-card emergency-card fade-in" style="animation-delay: 0.25s;">
-                    <h3>Emergency Fund</h3>
-                    <div class="target-amount" id="res-emergency-target">₹0</div>
-                    <p class="emergency-message" id="res-emergency-msg">Analyzing...</p>
-                    <div class="stat-badge mt-auto" id="res-emergency-status">Status</div>
-                </div>
-
-                <!-- Charts Section -->
-                <div class="glass-panel dash-card chart-card fade-in" style="animation-delay: 0.3s; grid-column: span 2;">
-                    <h3>50-30-20 Rule vs Reality</h3>
-                    <div class="chart-container">
-                        <canvas id="budgetChart"></canvas>
+                    <div class="input-group">
+                        <label for="prof-empType">Employment Type</label>
+                        <select id="prof-empType" class="readonly-input" disabled>
+                            <option value="salaried" selected>Salaried</option>
+                            <option value="self-employed">Self-Employed</option>
+                            <option value="student">Student</option>
+                            <option value="unemployed">Unemployed</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="prof-stability">Job Stability</label>
+                        <select id="prof-stability" class="readonly-input" disabled>
+                            <option value="high">High</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="prof-dependents">Number of Dependents</label>
+                        <input type="number" id="prof-dependents" class="readonly-input" readonly placeholder="0">
+                    </div>
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <label for="prof-bio">Bio (Short Description)</label>
+                        <input type="text" id="prof-bio" class="readonly-input" readonly placeholder="Tell us about yourself...">
                     </div>
                 </div>
+            </form>
+        </section>
 
-                <!-- Action Plan -->
-                <div class="glass-panel dash-card action-card fade-in" style="animation-delay: 0.35s; grid-column: 1 / -1;">
-                    <h3>Personalized Action Plan</h3>
-                    <ol id="action-plan-list" class="action-list">
-                        <!-- Populated via JS -->
-                    </ol>
+        <!-- Settings Section -->
+        <section id="settings-section" class="hidden fade-in" style="margin-bottom: 2rem;">
+            <div class="dashboard-header">
+                <h2>Account Settings</h2>
+            </div>
+            
+            <div class="settings-layout">
+                <!-- A. Account Settings -->
+                <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+                    <h3>Account Security</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Change Email</label>
+                            <input type="email" id="set-email" placeholder="New email address">
+                        </div>
+                        <div class="input-group">
+                            <label>Verify Current Password</label>
+                            <input type="password" id="set-pass-curr" placeholder="Required for changes">
+                        </div>
+                        <div class="input-group">
+                            <label>Change Password</label>
+                            <input type="password" id="set-pass" placeholder="New Password">
+                        </div>
+                        <div class="input-group">
+                            <label>Confirm Password</label>
+                            <input type="password" id="set-pass-confirm" placeholder="Confirm Password">
+                        </div>
+                    </div>
+                    <button class="btn-secondary" id="set-sec-btn">Update Security</button>
                 </div>
 
-                <!-- Investments Table -->
-                <div class="glass-panel dash-card investment-card fade-in" style="animation-delay: 0.4s; grid-column: 1 / -1;">
-                    <h3>Investment Comparisons</h3>
-                    <div class="table-responsive">
-                        <table class="glass-table">
-                            <thead>
-                                <tr>
-                                    <th>Option</th>
-                                    <th>Risk</th>
-                                    <th>Expected Return</th>
-                                    <th>Suitability</th>
-                                </tr>
-                            </thead>
-                            <tbody id="investments-tbody">
-                                <!-- Populated via JS -->
-                            </tbody>
-                        </table>
+                <!-- B. Privacy Settings -->
+                <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+                    <h3>Privacy & Data</h3>
+                    <div class="toggle-group">
+                        <div class="toggle-text">
+                            <strong>Public Profile Visibility</strong>
+                            <p>Allow others to view your profile and generic financial achievements.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="set-pub-vis">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <hr class="divider" style="margin: 1.25rem 0;">
+                    <div class="toggle-group">
+                        <div class="toggle-text">
+                            <strong>Cloud Blueprint Persistence</strong>
+                            <p>Securely store and retrieve past AI blueprints and financial graphs.</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="set-save-data" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
                     </div>
                 </div>
 
-                <!-- Recommendations -->
-                <div class="glass-panel dash-card recommendations-card fade-in" style="animation-delay: 0.45s; grid-column: 1 / -1;">
-                    <h3>AI Explanations & Advice</h3>
-                    <ul id="recommendations-list" class="recs-list">
-                        <!-- Populated via JS -->
-                    </ul>
+                <!-- C. Preferences -->
+                <div class="glass-panel dash-card" style="margin-bottom: 1.5rem;">
+                    <h3>App Preferences</h3>
+                    <div class="form-grid">
+                        <div class="input-group">
+                            <label>Currency Layout</label>
+                            <select id="set-currency">
+                                <option value="INR" selected>INR (₹) - Indian Rupee</option>
+                                <option value="USD">USD ($) - US Dollar</option>
+                                <option value="EUR">EUR (€) - Euro</option>
+                                <option value="GBP">GBP (£) - British Pound</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Workspace Theme</label>
+                            <select id="set-theme">
+                                <option value="dark" selected>Dark Glassmorphism (Default)</option>
+                                <option value="light" disabled>Light Mode (Coming Soon)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- D. Legal -->
+                <div class="glass-panel dash-card">
+                    <h3>Legal & Compliance</h3>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <button class="btn-secondary" onclick="alert('Privacy Policy Modal Opened.')">Privacy Policy</button>
+                        <button class="btn-secondary" onclick="alert('Terms & Conditions Modal Opened.')">Terms & Conditions</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -221,6 +549,8 @@
         <footer>
             <p class="disclaimer">⚠️ This system provides AI-based financial guidance and does not replace professional financial advice.</p>
         </footer>
+            </div>
+        </main>
     </div>
 
     <!-- Chatbot Widget -->
