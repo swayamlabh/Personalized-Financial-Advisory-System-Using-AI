@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Financial Advisor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="background-blobs">
+        <div class="blob shape-1"></div>
+        <div class="blob shape-2"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Personalized Financial Advisory System</h1>
+            <p>AI-Powered insights for your wealth journey</p>
+        </header>
+
+        <!-- Input Section -->
+        <section id="input-section" class="glass-panel slide-up">
+            <h2>Your Financial Details</h2>
+            <form id="advisor-form">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="income">Monthly Income</label>
+                        <input type="text" id="income" placeholder="e.g., 1.5 Lakh or 150000" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="expenses">Monthly Expenses</label>
+                        <input type="text" id="expenses" placeholder="e.g., 80k or 80000" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="risk">Risk Appetite</label>
+                    <select id="risk" required>
+                        <option value="Low">Low (FDs, Debt)</option>
+                        <option value="Medium" selected>Medium (Balanced, Index)</option>
+                        <option value="High">High (Equity, Stocks)</option>
+                    </select>
+                </div>
+
+                <hr class="divider">
+
+                <h3>Financial Goal</h3>
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="goal-name">Goal Name</label>
+                        <input type="text" id="goal-name" placeholder="e.g., Buy a Car" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="goal-amount">Goal Amount</label>
+                        <input type="text" id="goal-amount" placeholder="e.g., 10 Lakh" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="goal-years">Years to Achieve</label>
+                        <input type="number" id="goal-years" placeholder="e.g., 5" step="0.1" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="analyze-btn">Generate AI Blueprint</button>
+            </form>
+        </section>
+
+        <!-- Dashboard Section (Hidden initially) -->
+        <section id="dashboard-section" class="hidden">
+            <div class="dashboard-header">
+                <h2>Your Financial Blueprint</h2>
+                <button id="reset-btn" class="btn-secondary">Recalculate</button>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Summary Card -->
+                <div class="glass-panel dash-card summary-card fade-in">
+                    <h3>Overview</h3>
+                    <div class="stat">
+                        <span class="label">Monthly Income</span>
+                        <span class="value" id="res-income">₹0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Monthly Expenses</span>
+                        <span class="value" id="res-expenses">₹0</span>
+                    </div>
+                    <div class="stat highlight-stat">
+                        <span class="label">Monthly Savings</span>
+                        <span class="value" id="res-savings">₹0</span>
+                    </div>
+                    <div class="stat-badge" id="res-health">Health: Checking...</div>
+                </div>
+
+                <!-- ML Category -->
+                <div class="glass-panel dash-card ml-card fade-in" style="animation-delay: 0.1s;">
+                    <h3>Spending Profile</h3>
+                    <div class="profile-icon">🧠</div>
+                    <h4 id="ml-category" class="gradient-text">Analyzing...</h4>
+                    <p class="savings-rate">You save <strong id="res-savings-rate">0%</strong> of your income.</p>
+                </div>
+
+                <!-- Goal Feasibility -->
+                <div class="glass-panel dash-card goal-card fade-in" style="animation-delay: 0.2s;">
+                    <h3 id="res-goal-name">Your Goal</h3>
+                    <div class="goal-amount-display" id="res-goal-amount">₹0</div>
+                    <p class="goal-message" id="res-goal-message">Analyzing feasibility...</p>
+                    <div class="required-sip">
+                        <span>Required SIP:</span>
+                        <h4 id="res-goal-monthly">₹0 <small>/ mo</small></h4>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="glass-panel dash-card chart-card fade-in" style="animation-delay: 0.3s;">
+                    <h3>50-30-20 Rule vs Reality</h3>
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                <div class="glass-panel dash-card recommendations-card fade-in" style="animation-delay: 0.4s; grid-column: 1 / -1;">
+                    <h3>AI Recommendations</h3>
+                    <ul id="recommendations-list" class="recs-list">
+                        <!-- Populated via JS -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loader" class="loader-overlay hidden">
+        <div class="spinner"></div>
+        <p>Crunching the numbers with AI...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
