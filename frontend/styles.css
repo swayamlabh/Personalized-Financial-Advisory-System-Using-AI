@@ -30,10 +30,9 @@
     margin-left: 0;
 }
 
-/* Dashboard layout: main content is offset by the collapsed sidebar width.
-   Sidebar expands (overlays) rightward on hover — no reflow. */
+/* Dashboard layout: Main content flexes adjacently to the sidebar. */
 .layout-dashboard .main-content {
-    margin-left: 64px;
+    margin-left: 0;
     height: 100vh;
     overflow-y: auto;
 }
@@ -101,10 +100,9 @@ body {
     min-height: 100vh;
 }
 
-/* Sidebar Container — icons-only by default, expands on hover */
+/* Sidebar Container — flex item, pushes content on expand */
 .sidebar {
-    position: fixed;
-    left: 0;
+    position: sticky;
     top: 0;
     width: 64px;
     height: 100vh;
@@ -147,11 +145,6 @@ body {
     .sidebar:hover {
         width: 240px;
     }
-}
-
-/* .collapsed class: keep sidebar at icon width */
-.sidebar.collapsed {
-    width: 64px;
 }
 
 /* Sidebar Header */
@@ -533,37 +526,82 @@ h3 {
 
 /* Navigation */
 .top-nav {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 2rem;
-    flex-wrap: wrap;
-    gap: 1.5rem;
+    padding-top: 1rem;
+    width: 100%;
+}
+.top-nav header {
+    text-align: center;
+}
+
+/* Smart Back Button */
+.smart-back-btn {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-white);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.05);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.smart-back-btn:hover {
+    background: linear-gradient(135deg, rgba(30, 58, 138, 0.02), rgba(30, 58, 138, 0.01));
+    transform: translateX(-3px);
+    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.1);
+}
+
+.smart-back-btn.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    filter: grayscale(1);
 }
 
 /* Account Bar Styling */
 .account-bar {
-    position: relative;
-    z-index: 100;
+    position: absolute;
+    top: 1rem;
+    right: 2rem;
+    z-index: 1000;
+    padding-bottom: 1rem; /* Invisible padding bridging the gap to dropdown */
+}
+
+/* Expanded invisible hover bridge to make diagonal mouse movement forgiving */
+.account-bar::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    bottom: -20px;
+    left: -40px;
+    right: -40px;
+    z-index: -1;
 }
 
 .account-profile {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    background: var(--bg-white);
-    border: 1px solid var(--glass-border);
-    padding: 0.4rem 1rem 0.4rem 0.4rem;
-    border-radius: 40px;
+    justify-content: center;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(30, 58, 138, 0.08);
     transition: all 0.3s ease;
+    border-radius: 50%;
 }
 
 .account-profile:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(30, 58, 138, 0.12);
-    border-color: rgba(30, 58, 138, 0.2);
 }
 
 .avatar {
@@ -585,10 +623,9 @@ h3 {
     box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
 }
 
+/* Hidden by default, keeping avatar only */
 .account-info {
-    display: flex;
-    flex-direction: column;
-    margin-right: 0.5rem;
+    display: none;
 }
 
 .user-name {
@@ -597,47 +634,6 @@ h3 {
     color: var(--text-main);
 }
 
-.account-type {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.pro-badge {
-    background: linear-gradient(to right, #f59e0b, #ef4444);
-    color: white;
-    padding: 0.1rem 0.4rem;
-    border-radius: 8px;
-    font-size: 0.65rem;
-    font-weight: 700;
-}
-
-.notification-icon {
-    position: relative;
-    font-size: 1.2rem;
-    margin-left: 0.25rem;
-    margin-right: 0;
-    color: var(--text-muted);
-    transition: color 0.3s;
-    cursor: pointer;
-    padding: 0.25rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Vertical separator between bell and avatar */
-.account-bar-divider {
-    width: 1px;
-    height: 24px;
-    background: var(--glass-border);
-    border-radius: 2px;
-    flex-shrink: 0;
-    margin: 0 0.25rem;
-}
 
 .account-profile:hover .notification-icon {
     color: var(--primary);
@@ -657,7 +653,7 @@ h3 {
 /* Account Dropdown */
 .dropdown-menu {
     position: absolute;
-    top: calc(100% + 0.8rem);
+    top: 100%; /* Sits exactly at bottom of account-bar's padding */
     right: 0;
     background: var(--bg-white);
     border: 1px solid var(--glass-border);
@@ -667,17 +663,25 @@ h3 {
     overflow: hidden;
     transform-origin: top right;
     
-    /* Animation states */
+    /* Default state (Hidden, Unhovered) */
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.95) translateY(-5px);
     visibility: hidden;
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    pointer-events: none;
+    
+    /* 250ms Delay before hiding when mouse leaves */
+    transition: opacity 0.3s ease 0.25s, transform 0.3s ease 0.25s, visibility 0s 0.55s;
 }
 
-.dropdown-menu.active {
+/* Hover trigger for dropdown instead of click */
+.account-bar:hover .dropdown-menu {
     opacity: 1;
     transform: scale(1) translateY(0);
     visibility: visible;
+    pointer-events: auto;
+    
+    /* Opens instantly when hovered */
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0s;
 }
 
 .dropdown-menu ul {
@@ -1219,6 +1223,31 @@ input:focus, select:focus {
     border-bottom-right-radius: 4px;
 }
 
+/* Typing indicator bubble */
+.typing-bubble {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.75rem 1rem;
+}
+
+.typing-bubble .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.6;
+    animation: typing-bounce 1.2s infinite ease-in-out;
+}
+
+.typing-bubble .dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-bubble .dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typing-bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40%            { transform: translateY(-6px); opacity: 1; }
+}
+
 .chat-input-area {
     padding: 1rem;
     border-top: 1px solid var(--glass-border);
@@ -1638,9 +1667,6 @@ select.readonly-input[disabled]:focus {
 @media (max-width: 900px) {
     .sidebar {
         width: 56px;
-    }
-    .layout-dashboard .main-content {
-        margin-left: 56px;
     }
 }
 

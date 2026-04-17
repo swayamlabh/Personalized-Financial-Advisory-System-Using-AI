@@ -1,4 +1,7 @@
-const API_BASE = 'http://localhost:8000/api';
+// Ensure frontend and backend origins align to prevent strict browser CORS/PNA network errors
+// Default to localhost if opened via file:/// protocol (where hostname is empty)
+const hostname = window.location.hostname || 'localhost';
+const API_BASE = `http://${hostname}:8000/api`;
 
 // ---- Backend Health State ----
 // Tracks whether the backend server is reachable. Starts as null (unknown),
@@ -129,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const hash = window.location.hash;
         const token = localStorage.getItem('token');
 
-        // Hide ALL major sections first
         authSection.classList.add('hidden');
         inputSection.classList.add('hidden');
         dashboardContainer.classList.add('hidden');
@@ -138,6 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
         homeSection.classList.add('hidden');
         chatWidget.classList.add('hidden');
         landingNavbar.classList.add('hidden');
+
+        // Smart Back Button State Management
+        updateSmartBackButton(hash);
 
         // Layout Separation logic (CleanLayout vs DashboardLayout)
         const appLayout = document.querySelector('.app-layout');
@@ -268,6 +273,60 @@ document.addEventListener('DOMContentLoaded', () => {
             accountDropdown.classList.remove('active');
             window.location.hash = '#settings';
         });
+    }
+
+    // ---- Smart Back Navigation State ----
+    let lastValidMainPage = '#dashboard/overview';
+    const sidebarOrder = ['overview', 'expenses', 'goals', 'investments'];
+    const smartBackBtn = document.getElementById('smart-back-btn');
+
+    if (smartBackBtn) {
+        smartBackBtn.addEventListener('click', () => {
+            const currentHash = window.location.hash;
+            
+            // Case 4: Profile / Settings fallback to previous main page
+            if (currentHash === '#profile' || currentHash === '#settings') {
+                window.location.hash = lastValidMainPage;
+                return;
+            }
+            
+            // Case 1 & 3: Sidebar Navigation 
+            if (currentHash.startsWith('#dashboard/')) {
+                const currentTab = currentHash.split('/')[1] || 'overview';
+                const currentIndex = sidebarOrder.indexOf(currentTab);
+                
+                if (currentIndex > 0) {
+                    // Go to previous sidebar item
+                    window.location.hash = `#dashboard/${sidebarOrder[currentIndex - 1]}`;
+                } else {
+                    // Fallback to previous logical flow step to prevent history loops
+                    window.location.hash = '#input';
+                }
+            } else if (currentHash === '#input') {
+                // If exiting the primary app flow, go home
+                window.location.hash = '#home';
+            } else {
+                // Default fallback
+                window.history.back();
+            }
+        });
+    }
+
+    function updateSmartBackButton(hash) {
+        if (!smartBackBtn) return;
+        
+        // Hide button on main un-authenticated / landing pages
+        if (['', '#home', '#login', '#signup'].includes(hash)) {
+            smartBackBtn.classList.add('hidden');
+            return;
+        }
+
+        smartBackBtn.classList.remove('hidden');
+
+        // Track last valid main page continuously
+        if (hash.startsWith('#dashboard/') || hash === '#input') {
+            lastValidMainPage = hash;
+        }
     }
 
     // ---- Profile Logic ----
@@ -582,6 +641,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderNotifications() {
+        if (!notifBadge || !notifList) return;
+        
         const unreadCount = notifications.filter(n => !n.read).length;
         if (unreadCount > 0) {
             notifBadge.classList.remove('hidden');
@@ -611,29 +672,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    accountProfileBtn.addEventListener('click', (e) => {
-        // Prevent click if we're clicking the notification bell which is inside the profile btn
-        if (e.target.closest('#notif-btn')) return;
-        
-        e.stopPropagation();
-        accountDropdown.classList.toggle('active');
-        notifDropdown.classList.remove('active');
-    });
-
-    notifBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        notifDropdown.classList.toggle('active');
-        accountDropdown.classList.remove('active');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!accountDropdown.contains(e.target) && !accountProfileBtn.contains(e.target)) {
-            accountDropdown.classList.remove('active');
-        }
-        if (!notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
-            notifDropdown.classList.remove('active');
-        }
-    });
+    // Removed click behavior for accountProfileBtn because it is now CSS hover-based
+    // Removed document click listener for accountDropdown closing because it is CSS hover-based
 
     // ---- Expense Categories Live Total ----
     const expInputs = document.querySelectorAll('.exp-input');
@@ -649,6 +689,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const addGoalBtn = document.getElementById('add-goal-btn');
     const goalsContainer = document.getElementById('goals-container');
     let goalCount = 1;
+
+    // Bind existing goals
+    document.querySelectorAll('.goal-entry').forEach(entry => {
+        const selectEl = entry.querySelector('.goal-name-select');
+        const customEl = entry.querySelector('.goal-name-custom');
+        if (selectEl && customEl) {
+            selectEl.addEventListener('change', () => {
+                if (selectEl.value === 'Other') {
+                    customEl.classList.remove('hidden');
+                    customEl.setAttribute('required', 'true');
+                } else {
+                    customEl.classList.add('hidden');
+                    customEl.removeAttribute('required');
+                }
+            });
+        }
+    });
+
     if (addGoalBtn) {
         addGoalBtn.addEventListener('click', () => {
             const idx = goalCount++;
@@ -656,9 +714,21 @@ document.addEventListener('DOMContentLoaded', () => {
             div.className = 'goal-entry form-grid';
             div.dataset.index = idx;
             div.innerHTML = `
-                <div class="input-group">
+                <div class="input-group goal-name-group">
                     <label>Goal Name</label>
-                    <input type="text" class="goal-name" placeholder="e.g., Emergency Fund">
+                    <select class="goal-name-select" required>
+                        <option value="" disabled selected>Select a goal</option>
+                        <option value="Buy a Car">🚗 Buy a Car</option>
+                        <option value="Buy a House">🏠 Buy a House</option>
+                        <option value="Travel / Vacation">✈️ Travel / Vacation</option>
+                        <option value="Emergency Fund">🛡️ Emergency Fund</option>
+                        <option value="Wedding">💍 Wedding</option>
+                        <option value="Start a Business">🚀 Start a Business</option>
+                        <option value="Retirement Planning">🏖️ Retirement Planning</option>
+                        <option value="Gadget Purchase (Phone/Laptop)">💻 Gadget Purchase</option>
+                        <option value="Other">✏️ Other (Enter manually)</option>
+                    </select>
+                    <input type="text" class="goal-name-custom hidden" placeholder="Enter custom goal" style="margin-top: 0.75rem;">
                 </div>
                 <div class="input-group">
                     <label>Target Amount</label>
@@ -671,6 +741,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             div.querySelector('.remove-goal-btn').addEventListener('click', () => div.remove());
+            
+            const selectEl = div.querySelector('.goal-name-select');
+            const customEl = div.querySelector('.goal-name-custom');
+            selectEl.addEventListener('change', () => {
+                if (selectEl.value === 'Other') {
+                    customEl.classList.remove('hidden');
+                    customEl.setAttribute('required', 'true');
+                } else {
+                    customEl.classList.add('hidden');
+                    customEl.removeAttribute('required');
+                }
+            });
+
             goalsContainer.appendChild(div);
         });
     }
@@ -696,7 +779,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const goalEntries = document.querySelectorAll('.goal-entry');
         const goals = [];
         goalEntries.forEach(entry => {
-            const name   = entry.querySelector('.goal-name')?.value.trim();
+            let name = '';
+            const selectEl = entry.querySelector('.goal-name-select');
+            if (selectEl) {
+                name = selectEl.value === 'Other' ? entry.querySelector('.goal-name-custom')?.value.trim() : selectEl.value;
+            } else {
+                name = entry.querySelector('.goal-name')?.value.trim();
+            }
+            
             const amount = entry.querySelector('.goal-amount')?.value.trim();
             const years  = entry.querySelector('.goal-years')?.value.trim();
             if (name && amount && years) goals.push({ name, amount, years });
@@ -1183,9 +1273,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const appendMessage = (text, sender) => {
         const msgDiv = document.createElement('div');
         msgDiv.className = `chat-msg ${sender === 'user' ? 'user-msg' : 'ai-msg'}`;
-        msgDiv.innerHTML = `<p>${text}</p>`;
+        const formatted = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+        msgDiv.innerHTML = `<p>${formatted}</p>`;
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
+        return msgDiv;
+    };
+
+    const showTyping = () => {
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-msg ai-msg typing-bubble';
+        bubble.id = 'typing-indicator';
+        bubble.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+        chatMessages.appendChild(bubble);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    };
+
+    const removeTyping = () => {
+        const t = document.getElementById('typing-indicator');
+        if (t) t.remove();
     };
 
     const handleChatSend = async () => {
@@ -1194,6 +1302,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         appendMessage(text, 'user');
         chatInput.value = '';
+        chatSend.disabled = true;
+        showTyping();
         
         const token = localStorage.getItem('token');
         try {
@@ -1206,6 +1316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ message: text })
             });
             const data = await res.json();
+            removeTyping();
             if (data.status === 'success') {
                 appendMessage(data.reply, 'ai');
             } else {
@@ -1213,7 +1324,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error(err);
-            appendMessage('Network error communicating with AI server.', 'ai');
+            removeTyping();
+            appendMessage('AI service temporarily unavailable. Please try again.', 'ai');
+        } finally {
+            chatSend.disabled = false;
         }
     };
 
@@ -1223,6 +1337,7 @@ document.addEventListener('DOMContentLoaded', () => {
             handleChatSend();
         }
     });
+
 
     // ---- Landing Page Interactions ----
     if (navAuthBtn) {

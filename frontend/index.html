@@ -43,23 +43,14 @@
                 <ul>
                     <li class="nav-item active" data-target="sec-overview">
                         <span class="nav-icon">📊</span>
-                        <span class="nav-text">Overview</span>
-                        <span class="nav-tooltip">Overview</span>
-                    </li>
-                    <li class="nav-item" data-target="sec-analysis">
-                        <span class="nav-icon">🔬</span>
-                        <span class="nav-text">Analysis</span>
-                        <span class="nav-tooltip">Analysis</span>
+                        <span class="nav-text">Dashboard</span>
+                        <span class="nav-tooltip">Dashboard</span>
                     </li>
                     <li class="nav-item" data-target="sec-expenses">
                         <span class="nav-icon">💸</span>
                         <span class="nav-text">Expenses</span>
                         <span class="nav-tooltip">Expenses</span>
                     </li>
-                </ul>
-
-                <p class="nav-section-title">TOOLS</p>
-                <ul>
                     <li class="nav-item" data-target="sec-goals">
                         <span class="nav-icon">🎯</span>
                         <span class="nav-text">Goals</span>
@@ -69,11 +60,6 @@
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">Investments</span>
                         <span class="nav-tooltip">Investments</span>
-                    </li>
-                    <li class="nav-item" id="ai-coach-nav-btn">
-                        <span class="nav-icon">🤖</span>
-                        <span class="nav-text">AI Coach</span>
-                        <span class="nav-tooltip">AI Coach</span>
                     </li>
                 </ul>
             </nav>
@@ -214,6 +200,12 @@
 
             <div class="container">
         <div class="top-nav">
+            <!-- Smart Back Button -->
+            <button id="smart-back-btn" class="smart-back-btn hidden" aria-label="Go Back">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                <span>Back</span>
+            </button>
+
             <header>
                 <h1>Personalized Financial Advisory System</h1>
                 <p>AI-Powered insights for your wealth journey</p>
@@ -222,15 +214,9 @@
             <!-- Top Right Account Bar -->
             <div id="account-bar" class="account-bar hidden">
                 <div class="account-profile" id="account-profile-btn">
-                    <div class="notification-icon" id="notif-btn">
-                        🔔
-                        <span class="notification-badge hidden" id="notif-badge"></span>
-                    </div>
-                    <div class="account-bar-divider"></div>
                     <div class="avatar" id="user-avatar">A</div>
                     <div class="account-info">
                         <span class="user-name" id="user-name-display">Loading...</span>
-                        <span class="account-type"><span class="pro-badge">Pro</span> Account</span>
                     </div>
                 </div>
                 
@@ -368,9 +354,21 @@
                 <div class="form-section-label">🎯 Financial Goals</div>
                 <div id="goals-container">
                     <div class="goal-entry form-grid" data-index="0">
-                        <div class="input-group">
+                        <div class="input-group goal-name-group">
                             <label>Goal Name</label>
-                            <input type="text" class="goal-name" placeholder="e.g., Buy a Car" required>
+                            <select class="goal-name-select" required>
+                                <option value="" disabled selected>Select a goal</option>
+                                <option value="Buy a Car">🚗 Buy a Car</option>
+                                <option value="Buy a House">🏠 Buy a House</option>
+                                <option value="Travel / Vacation">✈️ Travel / Vacation</option>
+                                <option value="Emergency Fund">🛡️ Emergency Fund</option>
+                                <option value="Wedding">💍 Wedding</option>
+                                <option value="Start a Business">🚀 Start a Business</option>
+                                <option value="Retirement Planning">🏖️ Retirement Planning</option>
+                                <option value="Gadget Purchase (Phone/Laptop)">💻 Gadget Purchase</option>
+                                <option value="Other">✏️ Other (Enter manually)</option>
+                            </select>
+                            <input type="text" class="goal-name-custom hidden" placeholder="Enter custom goal" style="margin-top: 0.75rem;">
                         </div>
                         <div class="input-group">
                             <label>Target Amount</label>

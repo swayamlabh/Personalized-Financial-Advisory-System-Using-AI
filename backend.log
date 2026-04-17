@@ -24,3 +24,357 @@ https://scikit-learn.org/stable/model_persistence.html#security-maintainability-
 /home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
   warnings.warn(
 INFO:     127.0.0.1:44282 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33194 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33194 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37502 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:37502 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38242 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38242 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38250 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38250 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39660 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:36026 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39520 - "POST /api/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:39284 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39284 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55714 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37762 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37762 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49554 - "POST /api/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:44846 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44846 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44846 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37908 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:37908 - "POST /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:37912 - "POST /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:39984 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37760 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:37760 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47976 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47976 - "POST /api/chat HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54122 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54122 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33848 - "POST /api/login HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:33776 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40244 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40244 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50588 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43612 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:43612 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34446 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:34446 - "POST /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:42296 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56554 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:56554 - "POST /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:54056 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39764 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39764 - "POST /api/login HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:39776 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33670 - "POST /api/login HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:33206 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54864 - "POST /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56018 - "POST /api/login HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:56018 - "POST /api/login HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'chat_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [32587]
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 79, in serve
+    await self._serve(sockets)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 86, in _serve
+    config.load()
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/config.py", line 441, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend/main.py", line 8, in <module>
+    from chat_api import chat_engine
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend/chat_api.py", line 3, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+WARNING:  StatReload detected changes in 'main.py'. Reloading...
+Process SpawnProcess-3:
+Traceback (most recent call last):
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+    self.run()
+  File "/usr/lib/python3.12/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 75, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 79, in serve
+    await self._serve(sockets)
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/server.py", line 86, in _serve
+    config.load()
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/config.py", line 441, in load
+    self.loaded_app = import_from_string(self.app)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/importer.py", line 22, in import_from_string
+    raise exc from None
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/importlib/__init__.py", line 90, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 995, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend/main.py", line 8, in <module>
+    from chat_api import chat_engine
+  File "/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend/chat_api.py", line 3, in <module>
+    from dotenv import load_dotenv
+ModuleNotFoundError: No module named 'dotenv'
+WARNING:  StatReload detected changes in 'main.py'. Reloading...
+INFO:     Started server process [80525]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:56164 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47296 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47306 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47308 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47310 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37472 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56164 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47306 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47308 - "OPTIONS /api/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47296 - "OPTIONS /api/login HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'chat_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [80525]
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/backend/chat_api.py:3: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+INFO:     Started server process [83879]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'chat_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [83879]
+INFO:     Started server process [84591]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'chat_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [84591]
+INFO:     Started server process [84690]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[ChatAPI] Gemini AI (google-genai SDK) connected successfully.
+INFO:     127.0.0.1:51258 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:51258 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51266 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51266 - "POST /api/chat HTTP/1.1" 401 Unauthorized
+WARNING:  StatReload detected changes in 'chat_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [84690]
+INFO:     Started server process [87305]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+[ChatAPI] Gemini init/smoke-test failed: 429 RESOURCE_EXHAUSTED. {'error': {'code': 429, 'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0, model: gemini-2.0-flash\nPlease retry in 57.912837183s.', 'status': 'RESOURCE_EXHAUSTED', 'details': [{'@type': 'type.googleapis.com/google.rpc.Help', 'links': [{'description': 'Learn more about Gemini API quotas', 'url': 'https://ai.google.dev/gemini-api/docs/rate-limits'}]}, {'@type': 'type.googleapis.com/google.rpc.QuotaFailure', 'violations': [{'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_input_token_count', 'quotaId': 'GenerateContentInputTokensPerModelPerMinute-FreeTier', 'quotaDimensions': {'model': 'gemini-2.0-flash', 'location': 'global'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerMinutePerProjectPerModel-FreeTier', 'quotaDimensions': {'location': 'global', 'model': 'gemini-2.0-flash'}}, {'quotaMetric': 'generativelanguage.googleapis.com/generate_content_free_tier_requests', 'quotaId': 'GenerateRequestsPerDayPerProjectPerModel-FreeTier', 'quotaDimensions': {'model': 'gemini-2.0-flash', 'location': 'global'}}]}, {'@type': 'type.googleapis.com/google.rpc.RetryInfo', 'retryDelay': '57s'}]}}
+INFO:     127.0.0.1:51374 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:51374 - "POST /api/analyze HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51380 - "OPTIONS /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51380 - "POST /api/chat HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54708 - "OPTIONS /api/analyze HTTP/1.1" 200 OK
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator KMeans from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator StandardScaler from version 1.6.1 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/vasterk/Personalized-Financial-Advisory-System-Using-AI/venv_linux/lib/python3.12/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but StandardScaler was fitted with feature names
+  warnings.warn(
+INFO:     127.0.0.1:54708 - "POST /api/analyze HTTP/1.1" 200 OK

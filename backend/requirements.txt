@@ -5,3 +5,7 @@ pandas
 numpy
 pydantic
 joblib
+google-generativeai
+python-dotenv
+passlib[bcrypt]
+python-jose[cryptography]
