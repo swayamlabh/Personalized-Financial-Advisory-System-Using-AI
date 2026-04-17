@@ -242,40 +242,91 @@
             <!-- Inline error message (shown instead of alert) -->
             <div id="auth-error-msg" class="auth-error-msg hidden"></div>
 
-            <div id="login-container">
-                <h2>Login to Your Dashboard</h2>
-                <form id="login-form">
-                    <div class="input-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Login</button>
-                    <p class="auth-toggle">Don't have an account? <span id="show-signup" class="toggle-link">Sign up</span></p>
-                </form>
+            <div class="auth-tabs">
+                <button id="tab-individual" class="auth-tab active">Individual</button>
+                <button id="tab-organization" class="auth-tab">Organization</button>
             </div>
-            
-            <div id="signup-container" class="hidden">
-                <h2>Create Your Account</h2>
-                <form id="signup-form">
-                    <div class="input-group">
-                        <label for="signup-name">Full Name</label>
-                        <input type="text" id="signup-name" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="signup-email">Email</label>
-                        <input type="email" id="signup-email" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="signup-password">Password</label>
-                        <input type="password" id="signup-password" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Sign Up</button>
-                    <p class="auth-toggle">Already have an account? <span id="show-login" class="toggle-link">Login</span></p>
-                </form>
+
+            <!-- INDIVIDUAL AUTH -->
+            <div id="individual-auth">
+                <div id="login-container">
+                    <h2>Login to Your Dashboard</h2>
+                    <form id="login-form">
+                        <div class="input-group">
+                            <label for="login-email">Email or Username</label>
+                            <input type="text" id="login-email" placeholder="Enter your email or username" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Login</button>
+                        <p class="auth-toggle">Don't have an account? <span id="show-signup" class="toggle-link">Sign up</span></p>
+                    </form>
+                </div>
+                
+                <div id="signup-container" class="hidden">
+                    <h2>Create Your Account</h2>
+                    <form id="signup-form">
+                        <div class="input-group">
+                            <label for="signup-name">Full Name</label>
+                            <input type="text" id="signup-name" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Sign Up</button>
+                        <p class="auth-toggle">Already have an account? <span id="show-login" class="toggle-link">Login</span></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ORGANIZATION AUTH -->
+            <div id="organization-auth" class="hidden">
+                <div id="org-login-container">
+                    <h2>Organization Platform</h2>
+                    <form id="org-login-form">
+                        <div class="input-group">
+                            <label for="org-login-name">Organization Name</label>
+                            <input type="text" id="org-login-name" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="org-login-password">Password</label>
+                            <input type="password" id="org-login-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Login</button>
+                        <p class="auth-toggle">Not registered? <span id="show-org-signup" class="toggle-link">Sign up</span></p>
+                    </form>
+                </div>
+                
+                <div id="org-signup-container" class="hidden">
+                    <h2>Register Organization</h2>
+                    <form id="org-signup-form">
+                        <div class="input-group">
+                            <label for="org-signup-name">Organization Name</label>
+                            <input type="text" id="org-signup-name" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="org-signup-country">Country</label>
+                            <input type="text" id="org-signup-country">
+                        </div>
+                        <div class="input-group">
+                            <label for="org-signup-employees">Number of Employees</label>
+                            <input type="number" id="org-signup-employees">
+                        </div>
+                        <div class="input-group">
+                            <label for="org-signup-password">Password</label>
+                            <input type="password" id="org-signup-password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Register Organization</button>
+                        <p class="auth-toggle">Already registered? <span id="show-org-login" class="toggle-link">Login</span></p>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -384,6 +435,199 @@
 
                 <button type="submit" class="btn-primary" id="analyze-btn">Generate AI Blueprint</button>
             </form>
+        </section>
+
+        <!-- Dashboard Phases Container -->
+        <!-- ORGANIZATION INITIAL INPUT -->
+        <section id="sec-org-input" class="glass-panel hidden slide-up" style="max-width: 800px; margin: 2rem auto;">
+            <div class="dashboard-header">
+                <h2>Organization Data Initialization</h2>
+                <button id="org-logout-btn" class="btn-secondary">Logout</button>
+            </div>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Please provide your financial dataset to activate the predictive analytics dashboard.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <!-- Left: CSV Upload -->
+                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
+                    <h3>Bulk Upload (CSV)</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Upload your ledger. We map generic expenses to specific required columns.</p>
+                    <form id="org-csv-upload-form">
+                        <input type="file" id="org-csv-file" accept=".csv" required style="margin-bottom: 1rem; width: 100%;">
+                        <button type="submit" class="btn-primary" style="width: 100%;">Upload CSV</button>
+                    </form>
+                </div>
+                
+                <!-- Right: Manual Entry -->
+                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
+                    <h3>Manual Entry</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Directly input core required parameters for immediate modeling.</p>
+                    <form id="org-manual-form">
+                        <div class="input-group" style="margin-bottom: 0.5rem">
+                            <label>Revenue *</label>
+                            <input type="number" id="org-man-rev" required>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0.5rem">
+                            <label>Total Cost *</label>
+                            <input type="number" id="org-man-cost" required>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 0.5rem">
+                            <label>Profit *</label>
+                            <input type="number" id="org-man-profit" required>
+                        </div>
+                        <div class="input-group" style="margin-bottom: 1rem">
+                            <label>Growth Rate %</label>
+                            <input type="number" id="org-man-growth" step="0.1">
+                        </div>
+                        <button type="submit" class="btn-secondary" style="width: 100%;">Process Record</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ORGANIZATION DATA ANALYTICS DASHBOARD -->
+        <section id="sec-org-dashboard" class="dashboard-section hidden slide-up">
+            <div class="dashboard-header" style="margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <h2>Organization Data Insights</h2>
+                    <div id="org-health-badge" class="health-badge hidden">Health: 0/100</div>
+                </div>
+                <div class="dash-actions">
+                    <button id="reset-analysis-btn" class="btn-secondary" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: var(--danger);">Reset Analysis</button>
+                </div>
+            </div>
+
+            <!-- Sub-tab Navigation -->
+            <div class="org-sub-tabs">
+                <button class="org-sub-tab active" data-tab="org-tab-overview">Overview</button>
+                <button class="org-sub-tab" data-tab="org-tab-insights">Insights</button>
+                <button class="org-sub-tab" data-tab="org-tab-predictions">Predictions</button>
+                <button class="org-sub-tab" data-tab="org-tab-advisory">Advisory</button>
+                <button class="org-sub-tab" data-tab="org-tab-summary">Summary</button>
+            </div>
+
+            <div id="org-tabs-container">
+                <!-- TAB 1: OVERVIEW -->
+                <div id="org-tab-overview" class="org-tab-content">
+                    <div class="dashboard-grid">
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Financial Overview</h3>
+                            <div class="stat-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                                <div class="stat-box">
+                                    <span>Total Revenue</span>
+                                    <span id="org-total-rev" class="stat-value color-success">$0</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span>Total Expenses</span>
+                                    <span id="org-total-exp" class="stat-value color-danger">$0</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span>Net Profit</span>
+                                    <span id="org-profit" class="stat-value">$0</span>
+                                </div>
+                                <div class="stat-box">
+                                    <span>Profit Margin</span>
+                                    <span id="org-profit-margin" class="stat-value color-warning">0%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Aggregated Metrics</h3>
+                            <div class="stat-list" style="margin-top: 1rem;">
+                                <div class="stat-row">
+                                    <span class="label">Average Growth Rate</span>
+                                    <span id="org-avg-growth" class="value">0%</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="label">Avg Health Score</span>
+                                    <span id="org-avg-health" class="value">0/100</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="label">Total Records</span>
+                                    <span id="org-record-count" class="value">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: INSIGHTS -->
+                <div id="org-tab-insights" class="org-tab-content hidden">
+                    <div class="dashboard-grid">
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Industry Category Breakdown</h3>
+                            <div id="org-industry-breakdown" class="chart-list">
+                                <!-- Loaded via JS -->
+                            </div>
+                        </div>
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Spending Diagnostics</h3>
+                            <div class="stat-list">
+                                <div class="stat-row">
+                                    <span class="label">Highest Cost Industry</span>
+                                    <span id="org-highest-cost-ind" class="value fallback">Loading...</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="label">Best Margin Industry</span>
+                                    <span id="org-best-margin-ind" class="value fallback">Loading...</span>
+                                </div>
+                            </div>
+                            <h3 style="margin-top: 1.5rem;">Anomaly Detection</h3>
+                            <div id="org-anomaly-list" class="anomaly-list">
+                                <!-- Loaded via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: PREDICTIONS -->
+                <div id="org-tab-predictions" class="org-tab-content hidden">
+                    <div class="glass-panel dash-card fade-in">
+                        <h3>Model Projections (Next 6 Months)</h3>
+                        <div id="org-prediction-chart-container" style="padding: 1rem; color: var(--text-muted);">
+                            <!-- SVG Chart -->
+                        </div>
+                    </div>
+                    <div class="dashboard-grid" style="margin-top: 1.5rem;">
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Projected Summary</h3>
+                            <p id="org-projection-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                                Analysis based on current trajectory and ML models.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: ADVISORY -->
+                <div id="org-tab-advisory" class="org-tab-content hidden">
+                    <div class="glass-panel dash-card fade-in">
+                        <h3>Actionable AI Suggestions</h3>
+                        <div id="org-advisory-list" class="advisory-grid">
+                            <!-- Loaded via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 5: SUMMARY -->
+                <div id="org-tab-summary" class="org-tab-content hidden">
+                    <div class="dashboard-grid">
+                        <div class="glass-panel dash-card fade-in health-summary-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem;">
+                            <h3>Financial Health Score</h3>
+                            <div id="org-health-circle" class="health-circle">0</div>
+                            <p id="org-risk-label" style="font-weight: 600; font-size: 1.2rem; margin-top: 1rem;">RISK: UNKNOWN</p>
+                        </div>
+                        <div class="glass-panel dash-card fade-in">
+                            <h3>Executive Summary</h3>
+                            <p id="org-summary-text" class="summary-text" style="font-size: 1.1rem; line-height: 1.6; color: var(--text-primary);">
+                                Loading analysis...
+                            </p>
+                            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+                                <span class="badge badge-ai">Generated by Finance ML</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- Dashboard Phases Container -->

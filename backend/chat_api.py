@@ -15,12 +15,10 @@ _client = None
 if _GEMINI_KEY:
     try:
         _client = genai.Client(api_key=_GEMINI_KEY)
-        # Quick smoke-test to confirm model works
-        _test = _client.models.generate_content(model=_GEMINI_MODEL, contents="ping")
         _gemini_available = True
-        print(f"[ChatAPI] Gemini AI ready — model: {_GEMINI_MODEL}")
+        print(f"[ChatAPI] Gemini AI configured — model: {_GEMINI_MODEL}")
     except Exception as e:
-        print(f"[ChatAPI] Gemini init/smoke-test failed: {e}")
+        print(f"[ChatAPI] Gemini client init failed: {e}")
 else:
     print("[ChatAPI] No GEMINI_API_KEY found — using intelligent fallback.")
 
