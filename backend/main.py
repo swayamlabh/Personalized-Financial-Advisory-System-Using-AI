@@ -23,8 +23,6 @@ _BACKEND_DIR = _os.path.dirname(_os.path.abspath(__file__))
 # but organizations now provide their own data.
 _BASE_DATASET_PATH = _os.path.join(_BACKEND_DIR, "data", "financial_advisory_dataset.csv")
 
-_GLOBAL_PIPELINE = None
-
 def get_org_analysis(org_name: str):
     # Fetch data from DB
     rows = auth.get_org_data_rows_from_db(org_name)
@@ -49,15 +47,14 @@ def get_org_analysis(org_name: str):
     analysis["anomalies"] = engineer.detect_anomalies(enriched_df)
     analysis["trends"] = engineer.generate_trends(enriched_df)
     
-    # ML Pipeline Initialization (Global Pre-training)
-    global _GLOBAL_PIPELINE
-    if '_GLOBAL_PIPELINE' not in globals() or _GLOBAL_PIPELINE is None:
-        _GLOBAL_PIPELINE = MLPipeline().train_global()
-    
-    pipeline = _GLOBAL_PIPELINE
+    # ML Pipeline
+    pipeline = MLPipeline()
+    # If very few rows, training might be spotty; handled within ml_pipeline or by checking len
+    if len(enriched_df) >= 3:
+        pipeline.train(enriched_df)
     analysis["pipeline"] = pipeline
     
-    # Predictions & Insights using Company Data as input to Global Model
+    # Predictions & Insights
     predictions = pipeline.predict_from_industry(enriched_df)
     analysis["predictions"] = predictions
     
@@ -250,19 +247,6 @@ def get_org_predictions(Authorization: Optional[str] = Header(None), industry: O
         preds = analysis["predictions"]
     return {"success": True, "data": preds}
 
-@app.post("/api/org/reset_analysis")
-def reset_org_analysis(Authorization: Optional[str] = Header(None)):
-    token = (Authorization or "").replace("Bearer ", "")
-    user = auth.get_user_from_token(token)
-    if not user or user.get("type") != "organization":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    try:
-        success = auth.clear_org_data(user["org_name"])
-        return {"success": success, "message": "Organization data reset completely."}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @app.post("/api/org/upload_csv")
 async def upload_org_csv(file: UploadFile = File(...), Authorization: Optional[str] = Header(None)):
     token = (Authorization or "").replace("Bearer ", "")
@@ -279,23 +263,12 @@ async def upload_org_csv(file: UploadFile = File(...), Authorization: Optional[s
         import io
         df = pd.read_csv(io.BytesIO(content))
         
-        # Dynamically detect columns
-        df.columns = [str(c).strip().lower().replace(' ', '_') for c in df.columns]
+        # Basic validation
+        required = ['revenue', 'total_cost']
+        found = [c for c in required if c in df.columns]
+        if not found:
+            raise HTTPException(status_code=400, detail="CSV must contain financial columns (revenue, total_cost, etc.)")
         
-        # Map common aliases
-        col_mappings = {
-            'expenses': 'total_cost',
-            'cost': 'total_cost',
-            'category': 'industry'
-        }
-        df.rename(columns=col_mappings, inplace=True)
-        
-        # Basic validation ensures at least we have math parameters
-        if 'revenue' not in df.columns:
-            df['revenue'] = 0
-        if 'total_cost' not in df.columns:
-            df['total_cost'] = 0
-            
         rows = df.to_dict(orient='records')
         auth.add_org_data_rows(user["org_name"], rows)
         

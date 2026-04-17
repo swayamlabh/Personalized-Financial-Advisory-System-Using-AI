@@ -115,37 +115,16 @@ class FeatureEngineer:
         return anomalies
 
     def generate_trends(self, df: pd.DataFrame) -> dict:
-        """
-        Uses a Decaying Growth model for realistic forward-looking projections.
-        Growth naturally slows down over time (5% decay per period).
-        """
+        """Uses growth_rate to simulate forward-looking trend values per industry."""
         industry_trends = {}
         for industry, grp in df.groupby('industry'):
-            # Use the mean of the latest records for a stable baseline
-            last_records = grp.tail(max(1, len(grp)//2))
-            avg_rev    = float(last_records['revenue'].mean())
-            avg_cost   = float(last_records['total_cost'].mean())
-            avg_growth = float(last_records['growth_rate'].mean())
-            
-            # Capping growth rate for projections to a realistic peak (15% per period)
-            peak_growth = min(0.15, max(-0.15, avg_growth))
+            avg_rev    = float(grp['revenue'].mean())
+            avg_cost   = float(grp['total_cost'].mean())
+            avg_growth = float(grp['growth_rate'].mean())
 
-            rev_trend = []
-            cost_trend = []
-            curr_rev = avg_rev
-            curr_cost = avg_cost
-            curr_growth = peak_growth
-
-            # Project 6 periods forward
-            for i in range(7):
-                rev_trend.append(round(curr_rev, 2))
-                cost_trend.append(round(curr_cost, 2))
-                
-                # Apply growth and then decay the growth rate for next period 
-                curr_rev *= (1 + curr_growth)
-                curr_cost *= (1 + curr_growth * 0.85) # Costs grow at ~85% of revenue rate
-                curr_growth *= 0.95 # Growth decay: 5% lower each month
-
+            # Project 6 periods forward (monthly simulation)
+            rev_trend  = [round(avg_rev  * ((1 + avg_growth) ** i), 2) for i in range(7)]
+            cost_trend = [round(avg_cost * ((1 + avg_growth * 0.9) ** i), 2) for i in range(7)]
             prof_trend = [round(r - c, 2) for r, c in zip(rev_trend, cost_trend)]
 
             industry_trends[industry] = {

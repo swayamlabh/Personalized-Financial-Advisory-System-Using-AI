@@ -24,25 +24,6 @@ class MLPipeline:
         self.metrics = {}
         self._trained = False
 
-    def train_global(self):
-        """Trains the ML models on the global baseline dataset only."""
-        if self._trained:
-            return self
-            
-        from .data_loading import DataLoader
-        from .preprocessing import DataPreprocessor
-        from .feature_engineering import FeatureEngineer
-        
-        try:
-            df = DataLoader().load()
-            clean_df = DataPreprocessor().clean_data(df)
-            enriched_df = FeatureEngineer().enrich_features(clean_df)
-            self.train(enriched_df)
-        except Exception as e:
-            print(f"[MLPipeline] Global training failed: {e}")
-            
-        return self
-
     def train(self, df: pd.DataFrame):
         # Normalize column names in DF just in case
         df.columns = [c.lower() for c in df.columns]
@@ -103,46 +84,31 @@ class MLPipeline:
         predicted_health = float(avg.get('health_score', 50))
         predicted_profit = float(avg.get('profit', 0))
         
-        # If model is trained, use it for a more refined score
+        # If model is trained, try to use it for a more refined current-state score
         if self._trained and self.health_model:
             try:
                 h_feat = np.array([[avg.get(c, 0) for c in self.feature_cols_health]])
                 h_feat_scaled = self.scaler_health.transform(h_feat)
-                # CLAMP: Health score must be 0-100
                 predicted_health = float(np.clip(self.health_model.predict(h_feat_scaled)[0], 0, 100))
             except:
                 pass
 
-        # Robust Projections using decaying growth
-        # Cap growth between -5% (decline) and 25% (high growth) for predictions
-        avg_growth = float(avg.get('growth_rate', 0.05))
-        safe_growth = min(0.15, max(-0.10, avg_growth)) 
-        
+        # Projections using growth_rate
+        avg_growth = float(avg.get('growth_rate', 0.05)) # default 5%
         avg_revenue = float(avg.get('revenue', 0))
         avg_cost    = float(avg.get('total_cost', 0))
 
         periods = ["Now", "M+1", "M+2", "M+3", "M+4", "M+5", "M+6"]
-        proj_rev    = []
-        proj_cost   = []
-        
-        curr_r, curr_c, curr_g = avg_revenue, avg_cost, safe_growth
-        for i in range(7):
-            proj_rev.append(round(curr_r, 2))
-            proj_cost.append(round(curr_c, 2))
-            curr_r *= (1 + curr_g)
-            curr_c *= (1 + curr_g * 0.9) # Costs scale slightly less than rev
-            curr_g *= 0.96 # Decay growth 4% per month for long-term realism
-
+        proj_rev    = [round(avg_revenue * ((1 + avg_growth) ** i), 2)    for i in range(7)]
+        proj_cost   = [round(avg_cost    * ((1 + avg_growth*0.9)**i), 2)  for i in range(7)]
         proj_profit = [round(r - c, 2) for r, c in zip(proj_rev, proj_cost)]
 
-        risk_label = "Low" if predicted_health >= 75 else "Moderate" if predicted_health >= 45 else "High Risk"
-        trend_label = "Hypergrowth" if safe_growth > 0.1 else "Steady Growth" if safe_growth > 0.02 else "Stagnant" if safe_growth > -0.02 else "Declining"
+        risk_label = "Low" if predicted_health >= 70 else "Medium" if predicted_health >= 40 else "High"
 
         return {
             "predicted_health_score": round(predicted_health, 1),
             "predicted_profit":       round(predicted_profit, 2),
             "predicted_risk_level":   risk_label,
-            "predicted_trend":        trend_label,
             "avg_growth_rate_pct":    round(avg_growth * 100, 2),
             "projections": {
                 "labels":   periods,

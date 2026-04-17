@@ -1,0 +1,436 @@
+diff --git a/frontend/index.html b/frontend/index.html
+index 6ce0fa6..c844453 100644
+--- a/frontend/index.html
++++ b/frontend/index.html
+@@ -439,194 +439,281 @@
+ 
+         <!-- Dashboard Phases Container -->
+         <!-- ORGANIZATION INITIAL INPUT -->
+-        <section id="sec-org-input" class="glass-panel hidden slide-up" style="max-width: 800px; margin: 2rem auto;">
++        <section id="sec-org-input" class="glass-panel hidden slide-up" style="max-width: 1000px; margin: 2rem auto;">
+             <div class="dashboard-header">
+-                <h2>Organization Data Initialization</h2>
+-                <button id="org-logout-btn" class="btn-secondary">Logout</button>
++                <h2>Organization Data Onboarding</h2>
++                <button id="org-logout-btn-input" class="btn-secondary">Logout</button>
+             </div>
+-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Please provide your financial dataset to activate the predictive analytics dashboard.</p>
++            <p style="color: var(--text-muted); margin-bottom: 2rem;">Activate predictive analytics by providing your financial datasets (PDF reports, CSV ledgers, or manual entry).</p>
+             
+-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+-                <!-- Left: CSV Upload -->
+-                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
+-                    <h3>Bulk Upload (CSV)</h3>
+-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Upload your ledger. We map generic expenses to specific required columns.</p>
++            <div class="org-input-grid">
++                <div class="glass-panel input-card">
++                    <div class="card-icon">📊</div>
++                    <h3>CSV Ledger</h3>
++                    <p class="card-desc">Bulk upload historical records.</p>
+                     <form id="org-csv-upload-form">
+-                        <input type="file" id="org-csv-file" accept=".csv" required style="margin-bottom: 1rem; width: 100%;">
++                        <div class="upload-area">
++                            <input type="file" id="org-csv-file" accept=".csv" required>
++                            <label for="org-csv-file" class="file-label">Choose CSV File</label>
++                        </div>
+                         <button type="submit" class="btn-primary" style="width: 100%;">Upload CSV</button>
+                     </form>
++                    <div class="guidelines">
++                        <h4>Guidelines:</h4>
++                        <ul>
++                            <li>Include <strong>revenue</strong> & <strong>total_cost</strong></li>
++                            <li>Include <strong>date</strong> (YYYY-MM-DD)</li>
++                        </ul>
++                    </div>
+                 </div>
+-                
+-                <!-- Right: Manual Entry -->
+-                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
+-                    <h3>Manual Entry</h3>
+-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Directly input core required parameters for immediate modeling.</p>
+-                    <form id="org-manual-form">
+-                        <div class="input-group" style="margin-bottom: 0.5rem">
+-                            <label>Revenue *</label>
+-                            <input type="number" id="org-man-rev" required>
+-                        </div>
+-                        <div class="input-group" style="margin-bottom: 0.5rem">
+-                            <label>Total Cost *</label>
+-                            <input type="number" id="org-man-cost" required>
+-                        </div>
+-                        <div class="input-group" style="margin-bottom: 0.5rem">
+-                            <label>Profit *</label>
+-                            <input type="number" id="org-man-profit" required>
+-                        </div>
+-                        <div class="input-group" style="margin-bottom: 1rem">
+-                            <label>Growth Rate %</label>
+-                            <input type="number" id="org-man-growth" step="0.1">
+-                        </div>
+-                        <button type="submit" class="btn-secondary" style="width: 100%;">Process Record</button>
++
++                <div class="glass-panel input-card highlighted">
++                    <div class="card-icon">🤖</div>
++                    <h3>AI PDF Parser</h3>
++                    <p class="card-desc">Upload reports; AI extracts data.</p>
++                    <form id="org-pdf-upload-form">
++                        <div class="upload-area">
++                            <input type="file" id="org-pdf-file" accept=".pdf" required>
++                            <label for="org-pdf-file" class="file-label">Choose PDF Report</label>
++                        </div>
++                        <button type="submit" class="btn-primary" style="width: 100%;">Extract with AI</button>
+                     </form>
++                    <div class="guidelines">
++                        <h4>Guidelines:</h4>
++                        <ul>
++                            <li>Profit & Loss statements</li>
++                            <li>Clear text-based PDFs</li>
++                        </ul>
++                    </div>
++                </div>
++                
++                <div class="glass-panel input-card">
++                    <div class="card-icon">✍️</div>
++                    <h3>Manual Record</h3>
++                    <p class="card-desc">Input specific period data.</p>
++                    <button id="show-manual-modal" class="btn-secondary" style="width: 100%;">Open Manual Form</button>
++                    <div class="guidelines">
++                        <h4>Guidelines:</h4>
++                        <ul>
++                            <li>20+ available data points</li>
++                            <li>Real-time feature engineering</li>
++                        </ul>
++                    </div>
+                 </div>
+             </div>
+         </section>
+ 
+-        <!-- ORGANIZATION DATA ANALYTICS DASHBOARD -->
+-        <section id="sec-org-dashboard" class="dashboard-section hidden slide-up">
+-            <div class="dashboard-header" style="margin-bottom: 2rem;">
+-                <div style="display: flex; align-items: center; gap: 1rem;">
+-                    <h2>Organization Data Insights</h2>
+-                    <div id="org-health-badge" class="health-badge hidden">Health: 0/100</div>
+-                </div>
+-                <div class="dash-actions">
+-                    <button id="reset-analysis-btn" class="btn-secondary" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: var(--danger);">Reset Analysis</button>
++        <!-- FULL MANUAL ENTRY MODAL -->
++        <div id="org-manual-modal" class="modal-overlay hidden">
++            <div class="glass-panel modal-content slide-up">
++                <div class="modal-header">
++                    <h3>Manual Financial Data Entry</h3>
++                    <button class="close-modal">&times;</button>
+                 </div>
+-            </div>
+-
+-            <!-- Sub-tab Navigation -->
+-            <div class="org-sub-tabs">
+-                <button class="org-sub-tab active" data-tab="org-tab-overview">Overview</button>
+-                <button class="org-sub-tab" data-tab="org-tab-insights">Insights</button>
+-                <button class="org-sub-tab" data-tab="org-tab-predictions">Predictions</button>
+-                <button class="org-sub-tab" data-tab="org-tab-advisory">Advisory</button>
+-                <button class="org-sub-tab" data-tab="org-tab-summary">Summary</button>
+-            </div>
+-
+-            <div id="org-tabs-container">
+-                <!-- TAB 1: OVERVIEW -->
+-                <div id="org-tab-overview" class="org-tab-content">
+-                    <div class="dashboard-grid">
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Financial Overview</h3>
+-                            <div class="stat-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+-                                <div class="stat-box">
+-                                    <span>Total Revenue</span>
+-                                    <span id="org-total-rev" class="stat-value color-success">$0</span>
+-                                </div>
+-                                <div class="stat-box">
+-                                    <span>Total Expenses</span>
+-                                    <span id="org-total-exp" class="stat-value color-danger">$0</span>
++                <form id="org-manual-form-expanded">
++                    <div class="manual-form-scroll">
++                        <div class="manual-group">
++                            <h4>🏢 Company Profile</h4>
++                            <div class="form-grid">
++                                <div class="input-group" title="Primary sector of operation">
++                                    <label>Industry</label>
++                                    <select id="man-industry" required>
++                                        <option value="Fintech">Fintech</option>
++                                        <option value="Healthcare">Healthcare</option>
++                                        <option value="Manufacturing">Manufacturing</option>
++                                        <option value="E-commerce">E-commerce</option>
++                                        <option value="SaaS">SaaS</option>
++                                        <option value="Other">Other</option>
++                                    </select>
+                                 </div>
+-                                <div class="stat-box">
+-                                    <span>Net Profit</span>
+-                                    <span id="org-profit" class="stat-value">$0</span>
++                                <div class="input-group" title="Current maturity level">
++                                    <label>Stage</label>
++                                    <select id="man-stage" required>
++                                        <option value="Startup">Startup</option>
++                                        <option value="Growth">Growth</option>
++                                        <option value="Mature">Mature</option>
++                                    </select>
+                                 </div>
+-                                <div class="stat-box">
+-                                    <span>Profit Margin</span>
+-                                    <span id="org-profit-margin" class="stat-value color-warning">0%</span>
++                                <div class="input-group" title="Main financial objective">
++                                    <label>Goal</label>
++                                    <select id="man-goal" required>
++                                        <option value="Survival">Survival</option>
++                                        <option value="Profit Maximization">Profit Maximization</option>
++                                        <option value="Growth">Growth</option>
++                                        <option value="Cost Optimization">Cost Optimization</option>
++                                    </select>
+                                 </div>
+                             </div>
+                         </div>
+ 
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Aggregated Metrics</h3>
+-                            <div class="stat-list" style="margin-top: 1rem;">
+-                                <div class="stat-row">
+-                                    <span class="label">Average Growth Rate</span>
+-                                    <span id="org-avg-growth" class="value">0%</span>
+-                                </div>
+-                                <div class="stat-row">
+-                                    <span class="label">Avg Health Score</span>
+-                                    <span id="org-avg-health" class="value">0/100</span>
+-                                </div>
+-                                <div class="stat-row">
+-                                    <span class="label">Total Records</span>
+-                                    <span id="org-record-count" class="value">0</span>
+-                                </div>
++                        <div class="manual-group">
++                            <h4>💰 Core Financials</h4>
++                            <div class="form-grid">
++                                <div class="input-group"><label>Revenue ($)</label><input type="number" id="man-revenue" required min="0"></div>
++                                <div class="input-group"><label>Total Cost ($)</label><input type="number" id="man-total-cost" required min="0"></div>
++                                <div class="input-group"><label>Cash Reserve ($)</label><input type="number" id="man-cash" min="0"></div>
++                            </div>
++                            <div class="form-grid">
++                                <div class="input-group"><label>Fixed Cost ($)</label><input type="number" id="man-fixed-cost" min="0"></div>
++                                <div class="input-group"><label>Variable Cost ($)</label><input type="number" id="man-variable-cost" min="0"></div>
++                                <div class="input-group"><label>Total Debt ($)</label><input type="number" id="man-debt" min="0"></div>
+                             </div>
+                         </div>
+-                    </div>
+-                </div>
+ 
+-                <!-- TAB 2: INSIGHTS -->
+-                <div id="org-tab-insights" class="org-tab-content hidden">
+-                    <div class="dashboard-grid">
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Industry Category Breakdown</h3>
+-                            <div id="org-industry-breakdown" class="chart-list">
+-                                <!-- Loaded via JS -->
++                        <div class="manual-group">
++                            <h4>📈 Efficiency & Performance</h4>
++                            <div class="form-grid">
++                                <div class="input-group"><label>Growth Rate (dec)</label><input type="number" id="man-growth-rate" step="0.01"></div>
++                                <div class="input-group"><label>Customer Count</label><input type="number" id="man-customers" min="0"></div>
++                                <div class="input-group"><label>CAC ($)</label><input type="number" id="man-cac" min="0"></div>
++                            </div>
++                            <div class="form-grid">
++                                <div class="input-group"><label>LTV ($)</label><input type="number" id="man-ltv" min="0"></div>
++                                <div class="input-group"><label>Burn Rate ($)</label><input type="number" id="man-burn" min="0"></div>
++                                <div class="input-group"><label>Runway (Months)</label><input type="number" id="man-runway" min="0"></div>
+                             </div>
+                         </div>
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Spending Diagnostics</h3>
+-                            <div class="stat-list">
+-                                <div class="stat-row">
+-                                    <span class="label">Highest Cost Industry</span>
+-                                    <span id="org-highest-cost-ind" class="value fallback">Loading...</span>
++                    </div>
++                    <div class="modal-footer">
++                        <button type="submit" class="btn-primary">Process & Sync Data</button>
++                    </div>
++                </form>
++            </div>
++        </div>
++
++        <!-- ORGANIZATION DATA ANALYTICS DASHBOARD -->
++        <section id="sec-org-dashboard" class="dashboard-section hidden slide-up">
++            <div class="org-layout">
++                <!-- Sidebar Navigation -->
++                <aside class="org-sidebar">
++                    <div class="sidebar-header">
++                        <div class="org-logo">CP</div>
++                        <h3 id="sidebar-org-name">Organization</h3>
++                    </div>
++                    <nav class="org-nav">
++                        <button class="org-nav-item active" data-tab="org-tab-overview"><span class="icon">📊</span> Overview</button>
++                        <button class="org-nav-item" data-tab="org-tab-insights"><span class="icon">💡</span> Insights</button>
++                        <button class="org-nav-item" data-tab="org-tab-predictions"><span class="icon">📈</span> Predictions</button>
++                        <button class="org-nav-item" data-tab="org-tab-advisory"><span class="icon">🤝</span> Advisory</button>
++                        <button class="org-nav-item" data-tab="org-tab-summary"><span class="icon">📄</span> Summary</button>
++                        <div class="nav-divider"></div>
++                        <button class="org-nav-item" data-tab="org-tab-settings"><span class="icon">⚙️</span> Settings</button>
++                    </nav>
++                    <div class="sidebar-footer">
++                        <button id="reset-analysis-btn" class="btn-danger-soft">Reset Analysis</button>
++                        <button id="org-logout-btn-dash" class="btn-secondary">Logout</button>
++                    </div>
++                </aside>
++
++                <!-- Main Content Area -->
++                <main class="org-main-content">
++                    <header class="content-header">
++                        <h2 id="current-tab-title">Overview</h2>
++                        <div id="org-health-badge" class="health-badge hidden">Health: 0/100</div>
++                    </header>
++
++                    <div id="org-tabs-container">
++                        <!-- TAB 1: OVERVIEW -->
++                        <div id="org-tab-overview" class="org-tab-content">
++                            <div class="dashboard-grid">
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Financial Overview</h3>
++                                    <div class="stat-grid">
++                                        <div class="stat-box"><span>Total Revenue</span><span id="org-total-rev" class="stat-value color-success">$0</span></div>
++                                        <div class="stat-box"><span>Total Expenses</span><span id="org-total-exp" class="stat-value color-danger">$0</span></div>
++                                        <div class="stat-box"><span>Net Profit</span><span id="org-profit" class="stat-value">$0</span></div>
++                                        <div class="stat-box"><span>Profit Margin</span><span id="org-profit-margin" class="stat-value color-warning">0%</span></div>
++                                    </div>
+                                 </div>
+-                                <div class="stat-row">
+-                                    <span class="label">Best Margin Industry</span>
+-                                    <span id="org-best-margin-ind" class="value fallback">Loading...</span>
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Aggregated Metrics</h3>
++                                    <div class="stat-list">
++                                        <div class="stat-row"><span class="label">Average Growth Rate</span><span id="org-avg-growth" class="value">0%</span></div>
++                                        <div class="stat-row"><span class="label">Avg Health Score</span><span id="org-avg-health" class="value">0/100</span></div>
++                                        <div class="stat-row"><span class="label">Total Records</span><span id="org-record-count" class="value">0</span></div>
++                                    </div>
+                                 </div>
+                             </div>
+-                            <h3 style="margin-top: 1.5rem;">Anomaly Detection</h3>
+-                            <div id="org-anomaly-list" class="anomaly-list">
+-                                <!-- Loaded via JS -->
+-                            </div>
+                         </div>
+-                    </div>
+-                </div>
+ 
+-                <!-- TAB 3: PREDICTIONS -->
+-                <div id="org-tab-predictions" class="org-tab-content hidden">
+-                    <div class="glass-panel dash-card fade-in">
+-                        <h3>Model Projections (Next 6 Months)</h3>
+-                        <div id="org-prediction-chart-container" style="padding: 1rem; color: var(--text-muted);">
+-                            <!-- SVG Chart -->
++                        <!-- TAB 2: INSIGHTS -->
++                        <div id="org-tab-insights" class="org-tab-content hidden">
++                            <div class="dashboard-grid">
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Industry Category Breakdown</h3>
++                                    <div id="org-industry-breakdown" class="chart-list"></div>
++                                </div>
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Spending Diagnostics</h3>
++                                    <div class="stat-list">
++                                        <div class="stat-row"><span class="label">Highest Cost Industry</span><span id="org-highest-cost-ind" class="value">...</span></div>
++                                        <div class="stat-row"><span class="label">Best Margin Industry</span><span id="org-best-margin-ind" class="value">...</span></div>
++                                    </div>
++                                    <h3 style="margin-top: 1.5rem;">Anomaly Detection</h3>
++                                    <div id="org-anomaly-list" class="anomaly-list"></div>
++                                </div>
++                            </div>
+                         </div>
+-                    </div>
+-                    <div class="dashboard-grid" style="margin-top: 1.5rem;">
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Projected Summary</h3>
+-                            <p id="org-projection-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+-                                Analysis based on current trajectory and ML models.
+-                            </p>
++
++                        <!-- TAB 3: PREDICTIONS -->
++                        <div id="org-tab-predictions" class="org-tab-content hidden">
++                            <div class="glass-panel dash-card fade-in">
++                                <h3>Model Projections (Next 6 Months)</h3>
++                                <div id="org-prediction-chart-container" class="chart-container">
++                                    <canvas id="org-predictions-chart"></canvas>
++                                </div>
++                            </div>
++                            <div class="dashboard-grid" style="margin-top: 1.5rem;">
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Future Values Table</h3>
++                                    <div id="org-projections-table" class="table-container"></div>
++                                </div>
++                            </div>
+                         </div>
+-                    </div>
+-                </div>
+ 
+-                <!-- TAB 4: ADVISORY -->
+-                <div id="org-tab-advisory" class="org-tab-content hidden">
+-                    <div class="glass-panel dash-card fade-in">
+-                        <h3>Actionable AI Suggestions</h3>
+-                        <div id="org-advisory-list" class="advisory-grid">
+-                            <!-- Loaded via JS -->
++                        <!-- TAB 4: ADVISORY -->
++                        <div id="org-tab-advisory" class="org-tab-content hidden">
++                            <div id="org-advisory-list" class="advisory-grid"></div>
+                         </div>
+-                    </div>
+-                </div>
+ 
+-                <!-- TAB 5: SUMMARY -->
+-                <div id="org-tab-summary" class="org-tab-content hidden">
+-                    <div class="dashboard-grid">
+-                        <div class="glass-panel dash-card fade-in health-summary-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem;">
+-                            <h3>Financial Health Score</h3>
+-                            <div id="org-health-circle" class="health-circle">0</div>
+-                            <p id="org-risk-label" style="font-weight: 600; font-size: 1.2rem; margin-top: 1rem;">RISK: UNKNOWN</p>
++                        <!-- TAB 5: SUMMARY -->
++                        <div id="org-tab-summary" class="org-tab-content hidden">
++                            <div class="dashboard-grid">
++                                <div class="glass-panel dash-card fade-in health-card" style="text-align: center;">
++                                    <h3>Financial Health Score</h3>
++                                    <div class="health-visual">
++                                        <svg viewBox="0 0 36 36" class="circular-chart" style="max-width: 150px;">
++                                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
++                                            <path id="health-circle-progress" class="circle" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
++                                            <text x="18" y="20.35" class="percentage" id="org-health-circle">0</text>
++                                        </svg>
++                                    </div>
++                                    <p id="org-health-desc">Calculating...</p>
++                                </div>
++                                <div class="glass-panel dash-card fade-in">
++                                    <h3>Executive Summary</h3>
++                                    <p id="org-summary-text" class="summary-text">Generating summary...</p>
++                                </div>
++                            </div>
+                         </div>
+-                        <div class="glass-panel dash-card fade-in">
+-                            <h3>Executive Summary</h3>
+-                            <p id="org-summary-text" class="summary-text" style="font-size: 1.1rem; line-height: 1.6; color: var(--text-primary);">
+-                                Loading analysis...
+-                            </p>
+-                            <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--glass-border);">
+-                                <span class="badge badge-ai">Generated by Finance ML</span>
++
++                        <!-- TAB 6: SETTINGS -->
++                        <div id="org-tab-settings" class="org-tab-content hidden">
++                            <div class="glass-panel dash-card fade-in" style="max-width: 600px;">
++                                <h3>Organization Settings</h3>
++                                <form id="org-settings-form" class="settings-form">
++                                    <div class="input-group"><label>Organization Name</label><input type="text" id="org-set-name" readonly></div>
++                                    <div class="input-group"><label>Country</label><input type="text" id="org-set-country"></div>
++                                    <div class="input-group"><label>Employees</label><input type="number" id="org-set-size"></div>
++                                    <div class="input-group"><label>Leadership Goals</label><textarea id="org-set-goals"></textarea></div>
++                                    <hr class="divider">
++                                    <div class="input-group"><label>New Password</label><input type="password" id="org-set-pass"></div>
++                                    <button type="submit" class="btn-primary">Save Settings</button>
++                                </form>
+                             </div>
+                         </div>
+                     </div>
+-                </div>
++                </main>
+             </div>
+         </section>
+ 

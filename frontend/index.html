@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Financial Advisor</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>FinAI Advisor — Personalized Financial Intelligence</title>
+    <meta name="description" content="AI-powered personalized financial advisory platform. Get real-time insights, expense tracking, and intelligent recommendations for your financial goals.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -12,14 +13,29 @@
     <nav class="landing-navbar hidden" id="landing-navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <span class="nav-logo-name">Capitex</span>
+                <img src="logo.png" alt="FinAI Advisor Logo" class="nav-logo-img">
+                <span class="nav-logo-name">FinAI<span class="nav-logo-accent"> Advisor</span></span>
             </div>
-            <div class="nav-links">
-                <a href="#home-features">Features</a>
-                <a href="#home-about">About</a>
-                <a href="#home-contact">Contact Us</a>
-                <button id="nav-auth-btn" class="btn-primary-small">Login / Register</button>
+            <div class="nav-links" id="nav-links-desktop">
+                <a href="#hp-features" class="nav-link">Features</a>
+                <a href="#home-platform" class="nav-link">Platform</a>
+                <a href="#hp-about" class="nav-link">About</a>
+                <a href="#home-contact" class="nav-link">Contact</a>
             </div>
+            <div class="nav-actions">
+                <button id="nav-auth-btn" class="btn-nav-outline">Login</button>
+                <button id="nav-get-started-btn" class="btn-nav-gradient">Get Started</button>
+            </div>
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+        <div class="nav-mobile-menu hidden" id="nav-mobile-menu">
+            <a href="#hp-features" class="nav-mobile-link">Features</a>
+            <a href="#home-platform" class="nav-mobile-link">Platform</a>
+            <a href="#hp-about" class="nav-mobile-link">About</a>
+            <a href="#home-contact" class="nav-mobile-link">Contact</a>
+            <button id="nav-auth-btn-mobile" class="btn-nav-gradient w-full">Get Started Free</button>
         </div>
     </nav>
     <div class="background-blobs">
@@ -30,7 +46,8 @@
         <!-- Sidebar Navigation (New Architecture) -->
         <aside class="sidebar collapsed hidden" id="sidebar">
             <div class="sidebar-header">
-                <div class="sidebar-logo">
+                <div class="sidebar-logo" style="display: flex; align-items: center;">
+                    <img src="logo.png" alt="Capitex Logo" class="company-logo" style="height: 24px; width: auto; margin-right: 8px;">
                     <span class="logo-text">Capitex</span>
                 </div>
                 <button id="sidebar-toggle" class="sidebar-toggle-btn" aria-label="Toggle Sidebar">
@@ -75,130 +92,276 @@
 
         <!-- Main Content Wrapper -->
         <main class="main-content">
-            <!-- New Landing Page Section -->
+            <!-- ==================== LANDING PAGE ==================== -->
             <section id="home-section" class="hidden">
-                <!-- Hero Section -->
-                <div class="hero">
-                    <div class="hero-overlay"></div>
-                    <div class="hero-content">
-                        <div class="hero-badge">AI-Powered Financial Platform</div>
-                        <h1 class="hero-quote">Your financial future is built today,<br>not tomorrow.</h1>
-                        <p class="hero-subtitle">Master your wealth journey with clear, data-driven insights and coaching.</p>
-                        <div class="hero-cta">
-                            <button id="hero-cta-btn" class="btn-hero-primary">Get Started Free</button>
-                            <a href="#home-features" class="btn-hero-ghost">See Features ↓</a>
+                <!-- ── HERO ── -->
+                <div class="hp-hero">
+                    <div class="hp-hero-grid-overlay"></div>
+                    <div class="hp-hero-glow"></div>
+                    <div class="hp-hero-content">
+                        <span class="hp-hero-badge">AI-POWERED FINANCIAL INTELLIGENCE</span>
+                        <h1 class="hp-hero-title">Your Finances,<br><span class="hp-gradient-text">Intelligently Managed</span></h1>
+                        <p class="hp-hero-desc">Harness the power of AI to get real-time financial insights, personalized recommendations, and a clear path to your goals — all in one platform.</p>
+                        <div class="hp-hero-cta">
+                            <button id="hero-cta-btn" class="hp-btn-gradient">Start Free Today <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+                            <a href="#hp-features" class="hp-btn-glass">See Features</a>
+                        </div>
+                        <div class="hp-hero-trust">
+                            <span class="hp-trust-dot"></span>
+                            <span>Trusted by 10,000+ users &nbsp;·&nbsp; No credit card required</span>
                         </div>
                     </div>
-                    <div class="scroll-down">
-                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"></path></svg>
-                    </div>
-                </div>
-
-                <!-- Features Section -->
-                <div id="home-features" class="container landing-section">
-                    <h2 class="section-title">Features</h2>
-                    <div class="features-grid">
-                        <div class="glass-panel feature-card">
-                            <div class="feature-icon">🤖</div>
-                            <h3>AI Financial Coach</h3>
-                            <p>Get real-time answers to your complex financial questions with our dedicated AI coach.</p>
-                        </div>
-                        <div class="glass-panel feature-card">
-                            <div class="feature-icon">📊</div>
-                            <h3>Expense Tracking</h3>
-                            <p>Monitor your spending patterns and get automated insights to optimize your monthly budget.</p>
-                        </div>
-                        <div class="glass-panel feature-card">
-                            <div class="feature-icon">🔮</div>
-                            <h3>Future Projections</h3>
-                            <p>Visualize your financial trajectory with advanced simulations based on inflation and savings.</p>
-                        </div>
-                        <div class="glass-panel feature-card">
-                            <div class="feature-icon">🎯</div>
-                            <h3>Goal Management</h3>
-                            <p>Set, track, and achieve your financial goals with personalized SIP and savings targets.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats Section -->
-                <div class="stats-section">
-                    <div class="stats-grid container">
-                        <div class="glass-panel stat-card">
-                            <h2 class="stat-number">10k+</h2>
-                            <p class="stat-label">Users Helped</p>
-                        </div>
-                        <div class="glass-panel stat-card">
-                            <h2 class="stat-number">5k+</h2>
-                            <p class="stat-label">Active Monthly</p>
-                        </div>
-                        <div class="glass-panel stat-card">
-                            <h2 class="stat-number">3+</h2>
-                            <p class="stat-label">Years Active</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- About/Goal Section -->
-                <div id="home-about" class="about-split-section">
-                    <div class="container about-split-inner">
-                        <div class="about-text-col">
-                            <span class="section-label">Our Mission</span>
-                            <h2 class="section-title left-align">Built for people who take their finances seriously.</h2>
-                            <p class="about-text">We built FinAd because personalized financial guidance shouldn't be a luxury. Our mission is to give you clear, actionable insights—powered by data and AI—so you can make confident decisions, grow your wealth, and achieve financial independence on your own terms.</p>
-                        </div>
-                        <div class="about-visual-col">
-                            <div class="about-card-stack">
-                                <div class="about-mini-card">
-                                    <span class="mini-card-icon">📈</span>
-                                    <div>
-                                        <p class="mini-card-title">Portfolio Growth</p>
-                                        <p class="mini-card-sub">+23.4% this year</p>
-                                    </div>
+                    <div class="hp-hero-visual">
+                        <div class="hp-dashboard-mock">
+                            <div class="hp-mock-header">
+                                <div class="hp-mock-dot red"></div><div class="hp-mock-dot yellow"></div><div class="hp-mock-dot green"></div>
+                                <span class="hp-mock-title">FinAI Dashboard</span>
+                            </div>
+                            <div class="hp-mock-body">
+                                <div class="hp-mock-stat">
+                                    <span class="hp-mock-label">Monthly Savings</span>
+                                    <span class="hp-mock-val green">₹42,500 ↑</span>
                                 </div>
-                                <div class="about-mini-card accent">
-                                    <span class="mini-card-icon">🎯</span>
-                                    <div>
-                                        <p class="mini-card-title">Goal on Track</p>
-                                        <p class="mini-card-sub">Buy Car — 68% funded</p>
-                                    </div>
+                                <div class="hp-mock-stat">
+                                    <span class="hp-mock-label">Portfolio Score</span>
+                                    <span class="hp-mock-val blue">87 / 100</span>
                                 </div>
-                                <div class="about-mini-card">
-                                    <span class="mini-card-icon">🛡️</span>
-                                    <div>
-                                        <p class="mini-card-title">Emergency Fund</p>
-                                        <p class="mini-card-sub">6 months covered</p>
-                                    </div>
+                                <div class="hp-mock-stat">
+                                    <span class="hp-mock-label">Goal Progress</span>
+                                    <div class="hp-mock-bar"><div class="hp-mock-bar-fill" style="width:72%"></div></div>
+                                    <span class="hp-mock-pct">72%</span>
+                                </div>
+                                <div class="hp-mock-chart">
+                                    <div class="hp-chart-bar" style="height:40%"></div>
+                                    <div class="hp-chart-bar" style="height:60%"></div>
+                                    <div class="hp-chart-bar" style="height:50%"></div>
+                                    <div class="hp-chart-bar active" style="height:80%"></div>
+                                    <div class="hp-chart-bar" style="height:70%"></div>
+                                    <div class="hp-chart-bar" style="height:90%"></div>
+                                </div>
+                                <div class="hp-mock-ai">
+                                    <span class="hp-ai-icon">✦</span>
+                                    <span>AI suggests increasing SIP by ₹2,000/mo for faster goal completion.</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Contact Section -->
-                <div id="home-contact" class="container landing-section contact-section">
-                    <h2 class="section-title">Get in Touch</h2>
-                    <div class="glass-panel contact-box">
-                        <div class="contact-info">
-                            <h3>Ready to start?</h3>
-                            <p>Join our newsletter for weekly financial tips and platform updates.</p>
+                <!-- ── STATS BAR ── -->
+                <div class="hp-stats-bar">
+                    <div class="hp-stats-inner">
+                        <div class="hp-stat-item">
+                            <span class="hp-stat-num">10K+</span>
+                            <span class="hp-stat-lbl">Users Helped</span>
                         </div>
-                        <div class="contact-form">
-                            <div class="input-group">
-                                <input type="email" placeholder="Enter your email address" class="contact-input">
-                                <button class="btn-primary-small">Subscribe</button>
-                            </div>
-                            <div class="social-links-row">
-                                <a href="#" class="social-icon">GitHub</a>
-                                <a href="#" class="social-icon">LinkedIn</a>
-                                <a href="#" class="social-icon">Twitter</a>
-                            </div>
+                        <div class="hp-stat-divider"></div>
+                        <div class="hp-stat-item">
+                            <span class="hp-stat-num">₹2.4B</span>
+                            <span class="hp-stat-lbl">Assets Analyzed</span>
+                        </div>
+                        <div class="hp-stat-divider"></div>
+                        <div class="hp-stat-item">
+                            <span class="hp-stat-num">98.2%</span>
+                            <span class="hp-stat-lbl">Accuracy Rate</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- ── FEATURES ── -->
+                <section id="hp-features" class="hp-features-section">
+                    <div class="hp-section-inner">
+                        <div class="hp-section-header">
+                            <span class="hp-section-badge">CAPABILITIES</span>
+                            <h2 class="hp-section-title">Everything You Need to Master Your Finances</h2>
+                            <p class="hp-section-sub">One intelligent platform that gives you personalized advice, predictive analytics, and full transparency over your financial life.</p>
+                        </div>
+                        <div class="hp-features-grid">
+                            <div class="hp-feat-card" data-delay="0">
+                                <div class="hp-feat-icon" style="--icon-clr:#2563eb">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M4.93 19.07l1.41-1.41m11.32-11.32 1.41-1.41"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">AI-Driven Insights</h3>
+                                <p class="hp-feat-desc">Get smart, personalized recommendations based on your spending patterns, income, and financial goals — powered by ML models trained on real financial data.</p>
+                            </div>
+                            <div class="hp-feat-card" data-delay="80">
+                                <div class="hp-feat-icon" style="--icon-clr:#14b8a6">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">Predictive Forecasting</h3>
+                                <p class="hp-feat-desc">Visualize your financial future with linear regression models and simulation — forecast savings, SIP maturity, and retirement corpus with confidence.</p>
+                            </div>
+                            <div class="hp-feat-card" data-delay="160">
+                                <div class="hp-feat-icon" style="--icon-clr:#8b5cf6">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">Organization Dashboard</h3>
+                                <p class="hp-feat-desc">Enterprise-grade analytics for businesses — upload financial records via CSV or PDF and instantly get spending diagnostics, anomaly detection, and profit insights.</p>
+                            </div>
+                            <div class="hp-feat-card" data-delay="240">
+                                <div class="hp-feat-icon" style="--icon-clr:#f59e0b">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">Personal Finance Coach</h3>
+                                <p class="hp-feat-desc">An always-available AI coach that explains your 50-30-20 budget split, suggests corrective actions, and guides you toward healthier financial habits.</p>
+                            </div>
+                            <div class="hp-feat-card" data-delay="320">
+                                <div class="hp-feat-icon" style="--icon-clr:#ef4444">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">Secure &amp; Private</h3>
+                                <p class="hp-feat-desc">Your data stays yours. All financial records are encrypted at rest and in transit. JWT-based authentication ensures only you access your information.</p>
+                            </div>
+                            <div class="hp-feat-card" data-delay="400">
+                                <div class="hp-feat-icon" style="--icon-clr:#0ea5e9">
+                                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                </div>
+                                <h3 class="hp-feat-title">Instant Analysis</h3>
+                                <p class="hp-feat-desc">Submit your financial details and get a comprehensive advisory report — health score, emergency fund status, goal timelines — all in under two seconds.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── PLATFORM / MISSION ── -->
+                <section id="home-platform" class="hp-platform-section">
+                    <div class="hp-section-inner hp-platform-inner">
+                        <div class="hp-platform-text">
+                            <span class="hp-section-badge">OUR MISSION</span>
+                            <h2 class="hp-section-title left">Built for people who take their finances seriously.</h2>
+                            <p class="hp-platform-desc">We built this platform because personalized financial guidance shouldn't be a luxury. Our mission is to give you clear, actionable advice — tailored to you — so you can make confident decisions, grow your wealth, and achieve financial independence on your own terms.</p>
+                            <button id="platform-cta-btn" class="hp-btn-gradient" style="margin-top:2rem">Get Started Free</button>
+                        </div>
+                        <div class="hp-platform-cards">
+                            <div class="hp-pcard">
+                                <div class="hp-pcard-icon">📈</div>
+                                <div>
+                                    <p class="hp-pcard-title">Portfolio Growth</p>
+                                    <p class="hp-pcard-sub">+23.4% average annual returns</p>
+                                </div>
+                            </div>
+                            <div class="hp-pcard">
+                                <div class="hp-pcard-icon">🎯</div>
+                                <div>
+                                    <p class="hp-pcard-title">Goal on Track</p>
+                                    <p class="hp-pcard-sub">Buy Car — 68% funded</p>
+                                </div>
+                            </div>
+                            <div class="hp-pcard">
+                                <div class="hp-pcard-icon">🛡️</div>
+                                <div>
+                                    <p class="hp-pcard-title">Emergency Fund</p>
+                                    <p class="hp-pcard-sub">6 months of expenses secured</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── ABOUT ── -->
+                <section id="hp-about" class="hp-about-section">
+                    <div class="hp-section-inner">
+                        <div class="hp-section-header">
+                            <span class="hp-section-badge">ABOUT US</span>
+                            <h2 class="hp-section-title">Turning financial complexity<br>into crystal-clear clarity</h2>
+                            <p class="hp-section-sub">We're a team of engineers, data scientists, and finance enthusiasts who believe that every person deserves a smart financial advisor in their pocket.</p>
+                        </div>
+
+                        <!-- Values grid -->
+                        <div class="hp-about-grid">
+                            <div class="hp-about-card">
+                                <div class="hp-about-card-icon" style="--abt-clr:#2563eb">🎯</div>
+                                <h3 class="hp-about-card-title">Our Mission</h3>
+                                <p class="hp-about-card-desc">Democratize personalized financial advice by making AI-powered intelligence accessible to everyone — not just institutions.</p>
+                            </div>
+                            <div class="hp-about-card">
+                                <div class="hp-about-card-icon" style="--abt-clr:#14b8a6">🔬</div>
+                                <h3 class="hp-about-card-title">Our Approach</h3>
+                                <p class="hp-about-card-desc">We combine machine learning, behavioral finance, and real-time data to deliver advice that's contextual, explainable, and actionable.</p>
+                            </div>
+                            <div class="hp-about-card">
+                                <div class="hp-about-card-icon" style="--abt-clr:#8b5cf6">🛡️</div>
+                                <h3 class="hp-about-card-title">Privacy First</h3>
+                                <p class="hp-about-card-desc">Your financial data is yours. We use JWT encryption, zero data selling, and strict role-based access so your information stays completely private.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tech stack banner -->
+                        <div class="hp-about-banner">
+                            <div class="hp-about-banner-text">
+                                <h3>Built with cutting-edge technology</h3>
+                                <p>From FastAPI micro-services to scikit-learn ML pipelines — engineered for speed, accuracy, and scale.</p>
+                            </div>
+                            <div class="hp-about-tech-pills">
+                                <span class="hp-tech-pill">Python</span>
+                                <span class="hp-tech-pill">FastAPI</span>
+                                <span class="hp-tech-pill">scikit-learn</span>
+                                <span class="hp-tech-pill">Chart.js</span>
+                                <span class="hp-tech-pill">JWT Auth</span>
+                                <span class="hp-tech-pill">SQLite</span>
+                            </div>
+                        </div>
+
+                        <!-- Stats row -->
+                        <div class="hp-about-stats">
+                            <div class="hp-about-stat">
+                                <span class="hp-about-stat-num">6+</span>
+                                <span class="hp-about-stat-lbl">ML Models</span>
+                            </div>
+                            <div class="hp-about-stat">
+                                <span class="hp-about-stat-num">&lt;2s</span>
+                                <span class="hp-about-stat-lbl">Analysis Time</span>
+                            </div>
+                            <div class="hp-about-stat">
+                                <span class="hp-about-stat-num">100%</span>
+                                <span class="hp-about-stat-lbl">Open Source</span>
+                            </div>
+                            <div class="hp-about-stat">
+                                <span class="hp-about-stat-num">2</span>
+                                <span class="hp-about-stat-lbl">User Roles</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── CONTACT / CTA ── -->
+                <section id="home-contact" class="hp-cta-section">
+                    <div class="hp-cta-inner">
+                        <h2 class="hp-cta-title">Ready to take control of your finances?</h2>
+                        <p class="hp-cta-desc">Join thousands of users already making smarter financial decisions with FinAI Advisor.</p>
+                        <div class="hp-cta-actions">
+                            <button id="cta-start-btn" class="hp-btn-gradient hp-btn-lg">Start Free Today</button>
+                            <div class="hp-newsletter">
+                                <input type="email" placeholder="Enter your email for updates" class="hp-email-input" id="hp-email-input">
+                                <button class="hp-btn-subscribe">Subscribe</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ── FOOTER ── -->
+                <footer class="hp-footer">
+                    <div class="hp-footer-inner">
+                        <div class="hp-footer-brand">
+                            <img src="logo.png" alt="FinAI Advisor" style="height:24px;opacity:.8">
+                            <span class="hp-footer-name">FinAI Advisor</span>
+                        </div>
+                        <div class="hp-footer-links">
+                            <a href="#hp-features">Features</a>
+                            <a href="#home-platform">Platform</a>
+                            <a href="#home-contact">Contact</a>
+                        </div>
+                        <p class="hp-footer-disclaimer">⚠ This system provides AI-based financial guidance and does not replace professional financial advice. Always consult a certified financial planner for major decisions.</p>
+                        <p class="hp-footer-copy">&copy; 2025 FinAI Advisor · Personalized Financial Advisory System</p>
+                    </div>
+                </footer>
             </section>
 
-            <div class="container">
+            <div class="container" id="app-main-wrapper">
+                <!-- Animated background blobs (purely decorative) -->
+                <div class="auth-blob-1" aria-hidden="true"></div>
+                <div class="auth-blob-2" aria-hidden="true"></div>
+                <div class="auth-blob-3" aria-hidden="true"></div>
         <div class="top-nav">
             <!-- Smart Back Button -->
             <button id="smart-back-btn" class="smart-back-btn hidden" aria-label="Go Back">
@@ -220,13 +383,6 @@
                     </div>
                 </div>
                 
-                <div class="dropdown-menu" id="notif-dropdown">
-                    <div class="notif-header">Notifications</div>
-                    <ul id="notif-list">
-                        <li class="empty-notif">No new notifications</li>
-                    </ul>
-                </div>
-
                 <div class="dropdown-menu" id="account-dropdown">
                     <ul>
                         <li><a href="#profile" id="dropdown-profile">Profile</a></li>
@@ -312,18 +468,10 @@
                             <input type="text" id="org-signup-name" required>
                         </div>
                         <div class="input-group">
-                            <label for="org-signup-country">Country</label>
-                            <input type="text" id="org-signup-country">
-                        </div>
-                        <div class="input-group">
-                            <label for="org-signup-employees">Number of Employees</label>
-                            <input type="number" id="org-signup-employees">
-                        </div>
-                        <div class="input-group">
                             <label for="org-signup-password">Password</label>
                             <input type="password" id="org-signup-password" required>
                         </div>
-                        <button type="submit" class="btn-primary">Register Organization</button>
+                        <button type="submit" class="btn-primary">Register</button>
                         <p class="auth-toggle">Already registered? <span id="show-org-login" class="toggle-link">Login</span></p>
                     </form>
                 </div>
@@ -437,54 +585,116 @@
             </form>
         </section>
 
-        <!-- Dashboard Phases Container -->
-        <!-- ORGANIZATION INITIAL INPUT -->
-        <section id="sec-org-input" class="glass-panel hidden slide-up" style="max-width: 800px; margin: 2rem auto;">
-            <div class="dashboard-header">
-                <h2>Organization Data Initialization</h2>
-                <button id="org-logout-btn" class="btn-secondary">Logout</button>
+        <!-- ORGANIZATION DATA INPUT LANDING (Mandatory before dashboard) -->
+        <section id="sec-org-input" class="dashboard-section hidden slide-up">
+            <div class="dashboard-header" style="margin-bottom: 2rem;">
+                <h2>Welcome to Capitex Organizations</h2>
+                <p style="color: var(--text-muted);">Please provide your financial data to generate personalized AI insights and predictions.</p>
             </div>
-            <p style="color: var(--text-muted); margin-bottom: 2rem;">Please provide your financial dataset to activate the predictive analytics dashboard.</p>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <!-- Left: CSV Upload -->
-                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
-                    <h3>Bulk Upload (CSV)</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Upload your ledger. We map generic expenses to specific required columns.</p>
-                    <form id="org-csv-upload-form">
-                        <input type="file" id="org-csv-file" accept=".csv" required style="margin-bottom: 1rem; width: 100%;">
-                        <button type="submit" class="btn-primary" style="width: 100%;">Upload CSV</button>
-                    </form>
+
+            <div class="dashboard-grid">
+                <!-- Option A: Upload CSV -->
+                <div class="glass-panel dash-card fade-in">
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                        <h3>Option A: Upload CSV</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">
+                            Upload your historical financial data. <br>
+                            Required columns: <strong>revenue, total_cost</strong> (or profit). <br>
+                            Recommended: <strong>date, industry, growth_rate, cac, ltv</strong>.
+                        </p>
+                        <input type="file" id="org-csv-upload" accept=".csv" style="display: none;">
+                        <button class="btn-primary" onclick="document.getElementById('org-csv-upload').click()">Choose CSV File</button>
+                        <p id="org-upload-status" style="margin-top: 1rem; font-size: 0.85rem;"></p>
+                    </div>
                 </div>
-                
-                <!-- Right: Manual Entry -->
-                <div class="glass-panel" style="background: rgba(255,255,255,0.02)">
-                    <h3>Manual Entry</h3>
-                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Directly input core required parameters for immediate modeling.</p>
-                    <form id="org-manual-form">
-                        <div class="input-group" style="margin-bottom: 0.5rem">
-                            <label>Revenue *</label>
-                            <input type="number" id="org-man-rev" required>
-                        </div>
-                        <div class="input-group" style="margin-bottom: 0.5rem">
-                            <label>Total Cost *</label>
-                            <input type="number" id="org-man-cost" required>
-                        </div>
-                        <div class="input-group" style="margin-bottom: 0.5rem">
-                            <label>Profit *</label>
-                            <input type="number" id="org-man-profit" required>
-                        </div>
-                        <div class="input-group" style="margin-bottom: 1rem">
-                            <label>Growth Rate %</label>
-                            <input type="number" id="org-man-growth" step="0.1">
-                        </div>
-                        <button type="submit" class="btn-secondary" style="width: 100%;">Process Record</button>
-                    </form>
+
+                <!-- Option B: Manual Input -->
+                <div class="glass-panel dash-card fade-in">
+                    <div style="text-align: center; padding: 2rem;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✍️</div>
+                        <h3>Option B: Manual Entry</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">
+                            Enter your financial metrics manually if you don't have a CSV file ready.
+                        </p>
+                        <button class="btn-secondary" id="btn-show-manual">Open Manual Form</button>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Manual Form Modal/Section (Hidden initially) -->
+            <div id="org-manual-form-container" class="glass-panel dash-card hidden fade-in" style="margin-top: 2rem; border-top: 4px solid var(--primary);">
+                <h3>Structured Data Entry</h3>
+                <form id="org-manual-form" class="stat-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="input-group">
+                        <label>Business Industry</label>
+                        <input type="text" name="industry" placeholder="e.g. Fintech, Healthcare">
+                    </div>
+                    <div class="input-group">
+                        <label>Company Stage</label>
+                        <select name="stage">
+                            <option value="Idea/Prototype">Idea/Prototype</option>
+                            <option value="Early Stage">Early Stage</option>
+                            <option value="Growth Stage">Growth Stage</option>
+                            <option value="Mature">Mature</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Main Goal</label>
+                        <input type="text" name="goal" placeholder="e.g. Global Expansion">
+                    </div>
+                    <div class="input-group">
+                        <label>Total Revenue *</label>
+                        <input type="number" name="revenue" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Total Cost *</label>
+                        <input type="number" name="total_cost" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Fixed Costs</label>
+                        <input type="number" name="fixed_cost">
+                    </div>
+                    <div class="input-group">
+                        <label>Variable Costs</label>
+                        <input type="number" name="variable_cost">
+                    </div>
+                    <div class="input-group">
+                        <label>Cash Reserves</label>
+                        <input type="number" name="cash_reserve">
+                    </div>
+                    <div class="input-group">
+                        <label>Outstanding Debt</label>
+                        <input type="number" name="debt">
+                    </div>
+                    <div class="input-group">
+                        <label>Growth Rate (%)</label>
+                        <input type="number" name="growth_rate" step="0.1">
+                    </div>
+                    <div class="input-group">
+                        <label>Customer Count</label>
+                        <input type="number" name="customer_count">
+                    </div>
+                    <div class="input-group">
+                        <label>Avg. CAC (Acquisition Cost)</label>
+                        <input type="number" name="cac">
+                    </div>
+                    <div class="input-group">
+                        <label>Avg. LTV (Lifetime Value)</label>
+                        <input type="number" name="ltv">
+                    </div>
+                    <div class="input-group">
+                        <label>Date for this record</label>
+                        <input type="date" name="date">
+                    </div>
+                    <div style="grid-column: 1 / -1; margin-top: 1rem;">
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 0.8rem 2.5rem;">Submit Record</button>
+                    </div>
+                </form>
             </div>
         </section>
 
-        <!-- ORGANIZATION DATA ANALYTICS DASHBOARD -->
+        <!-- ORGANIZATION DATA ANALYTICS DASHBOARD (Tabbed Architecture) -->
         <section id="sec-org-dashboard" class="dashboard-section hidden slide-up">
             <div class="dashboard-header" style="margin-bottom: 2rem;">
                 <div style="display: flex; align-items: center; gap: 1rem;">
@@ -492,7 +702,8 @@
                     <div id="org-health-badge" class="health-badge hidden">Health: 0/100</div>
                 </div>
                 <div class="dash-actions">
-                    <button id="reset-analysis-btn" class="btn-secondary" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: var(--danger);">Reset Analysis</button>
+                    <button id="goto-input-btn" class="btn-secondary">Update Data</button>
+                    <button id="refresh-dataset-btn" class="btn-secondary">Reload Dataset</button>
                 </div>
             </div>
 
@@ -590,9 +801,22 @@
                     </div>
                     <div class="dashboard-grid" style="margin-top: 1.5rem;">
                         <div class="glass-panel dash-card fade-in">
+                            <h3>ML Model Performance</h3>
+                            <div class="stat-list">
+                                <div class="stat-row">
+                                    <span class="label">Health Predictor R²</span>
+                                    <span id="org-model-r2-health" class="value">...</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="label">Profit Predictor R²</span>
+                                    <span id="org-model-r2-profit" class="value">...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="glass-panel dash-card fade-in">
                             <h3>Projected Summary</h3>
                             <p id="org-projection-desc" style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
-                                Analysis based on current trajectory and ML models.
+                                Analysis based on current growth trajectory and Linear Regression models.
                             </p>
                         </div>
                     </div>

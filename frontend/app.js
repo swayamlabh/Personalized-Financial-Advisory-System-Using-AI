@@ -52,11 +52,6 @@ function showAuthError(message) {
     }
 }
 
-function hideAuthError() {
-    const errEl = document.getElementById('auth-error-msg');
-    if (errEl) errEl.classList.add('hidden');
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     // ---- DOM Elements ----
     
@@ -86,19 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutBtn = document.getElementById('logout-btn');
     const sidebarLogoutBtn = document.getElementById('sidebar-logout');
     
-    // Auth Tabs & Org
-    const tabIndividual = document.getElementById('tab-individual');
-    const tabOrganization = document.getElementById('tab-organization');
-    const individualAuth = document.getElementById('individual-auth');
-    const organizationAuth = document.getElementById('organization-auth');
-    
-    const orgLoginContainer = document.getElementById('org-login-container');
-    const orgSignupContainer = document.getElementById('org-signup-container');
-    const showOrgSignupBtn = document.getElementById('show-org-signup');
-    const showOrgLoginBtn = document.getElementById('show-org-login');
-    const orgLoginForm = document.getElementById('org-login-form');
-    const orgSignupForm = document.getElementById('org-signup-form');
-    
     // Forms & Inputs
     const advisorForm = document.getElementById('advisor-form');
     const resetBtn = document.getElementById('reset-btn');
@@ -120,13 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameDisplay = document.getElementById('user-name-display');
     const dropdownLogout = document.getElementById('dropdown-logout');
     
-    // Notifications
-    const notifBtn = document.getElementById('notif-btn');
-    const notifDropdown = document.getElementById('notif-dropdown');
-    const notifBadge = document.getElementById('notif-badge');
-    const notifList = document.getElementById('notif-list');
-    
-    let notifications = [];
+    // Notifications removed
 
     let budgetChartInstance = null;
     
@@ -136,7 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Router Logic ----
     function init() {
         if (!window.location.hash) {
-            window.location.hash = localStorage.getItem('token') ? (localStorage.getItem('userType') === 'organization' ? '#org-dashboard' : '#input') : '#home';
+        window.location.hash = localStorage.getItem('token')
+            ? (localStorage.getItem('userType') === 'organization' ? '#org-dashboard' : '#input')
+            : '#home';
         }
         window.addEventListener('hashchange', handleRoute);
         handleRoute();
@@ -149,6 +127,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleRoute() {
         const hash = window.location.hash;
         const token = localStorage.getItem('token');
+        const userType = localStorage.getItem('userType');
+        const appMainWrapper = document.getElementById('app-main-wrapper');
+        // Always restore the wrapper first; the #home route will hide it again below
+        if (appMainWrapper) appMainWrapper.style.display = '';
 
         authSection.classList.add('hidden');
         inputSection.classList.add('hidden');
@@ -158,10 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
         homeSection.classList.add('hidden');
         chatWidget.classList.add('hidden');
         landingNavbar.classList.add('hidden');
-        const secOrgInputEl = document.getElementById('sec-org-input');
-        const secOrgDashboardEl = document.getElementById('sec-org-dashboard');
-        if (secOrgInputEl) secOrgInputEl.classList.add('hidden');
-        if (secOrgDashboardEl) secOrgDashboardEl.classList.add('hidden');
+        
+        const orgDashSection = document.getElementById('sec-org-dashboard');
+        if (orgDashSection) orgDashSection.classList.add('hidden');
+        
+        const orgInputSection = document.getElementById('sec-org-input');
+        if (orgInputSection) orgInputSection.classList.add('hidden');
 
         // Smart Back Button State Management
         updateSmartBackButton(hash);
@@ -185,8 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Auth Gate
-        const publicRoutes = ['#signup', '#login', '#home', '#org-login', '#org-signup'];
-        if (!token && !publicRoutes.includes(hash)) {
+        if (!token && hash !== '#signup' && hash !== '#login' && hash !== '#home') {
             window.location.hash = '#home';
             return;
         }
@@ -195,43 +178,32 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
         // View Router
-        if (hash === '#login' || hash === '#signup' || hash === '#org-login' || hash === '#org-signup') {
+        if (hash === '#login' || hash === '#signup') {
             window.appState = null;
             authSection.classList.remove('hidden');
             accountBar.classList.add('hidden');
-
-            if (hash === '#org-login' || hash === '#org-signup') {
-                switchAuthTab('organization');
-                if (hash === '#org-signup') {
-                    orgLoginContainer.classList.add('hidden');
-                    orgSignupContainer.classList.remove('hidden');
-                } else {
-                    orgSignupContainer.classList.add('hidden');
-                    orgLoginContainer.classList.remove('hidden');
-                }
+            if (hash === '#signup') {
+                loginContainer.classList.add('hidden');
+                signupContainer.classList.remove('hidden');
             } else {
-                switchAuthTab('individual');
-                if (hash === '#signup') {
-                    loginContainer.classList.add('hidden');
-                    signupContainer.classList.remove('hidden');
-                } else {
-                    signupContainer.classList.add('hidden');
-                    loginContainer.classList.remove('hidden');
-                }
+                signupContainer.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
             }
         }
         else if (hash === '#home') {
             homeSection.classList.remove('hidden');
             landingNavbar.classList.remove('hidden');
             accountBar.classList.add('hidden');
+            // Hide the old app content wrapper — it creates the white section below the footer
+            if (appMainWrapper) appMainWrapper.style.display = 'none';
         }
         else if (hash === '#input') {
+            if (userType === 'organization') {
+                window.location.hash = '#org-dashboard';
+                return;
+            }
             inputSection.classList.remove('hidden');
             accountBar.classList.remove('hidden');
-        }
-        else if (hash === '#org-dashboard') {
-            accountBar.classList.remove('hidden');
-            if (window.loadOrgDashboard) window.loadOrgDashboard();
         }
         else if (hash === '#profile') {
             profileSection.classList.remove('hidden');
@@ -246,6 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
             loadUserSettings();
         }
         else if (hash.startsWith('#dashboard')) {
+            if (userType === 'organization') {
+                window.location.hash = '#org-dashboard';
+                return;
+            }
             if (!window.appState) {
                 window.location.hash = '#input';
                 return;
@@ -262,6 +238,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const activeNav = document.querySelector(`.nav-item[data-target="sec-${tab}"]`);
             if (activeNav) activeNav.classList.add('active');
+        }
+        else if (hash === '#org-dashboard') {
+            if (userType !== 'organization') {
+                window.location.hash = '#input';
+                return;
+            }
+            accountBar.classList.remove('hidden');
+            loadOrgDashboard();
         }
     }
 
@@ -370,6 +354,320 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ---- Profile Logic ----
+    // ---- Organization Dashboard Logic ----
+    let currentOrgData = null;
+
+    async function loadOrgDashboard() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        // Reset UI state
+        const badge = document.getElementById('org-health-badge');
+        if (badge) badge.classList.add('hidden');
+
+        try {
+            const res = await fetch(`${API_BASE}/org/dashboard`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) throw new Error('Failed to fetch org data');
+            const json = await res.json();
+            
+            const dashboardSec = document.getElementById('sec-org-dashboard');
+            const inputSec = document.getElementById('sec-org-input');
+
+            // --- Access Control Logic ---
+            if (!json.data) {
+                // No data -> show input landing
+                dashboardSec.classList.add('hidden');
+                inputSec.classList.remove('hidden');
+                initOrgInputForms(); // wire up upload/manual buttons
+                return;
+            }
+
+            // Data exists -> show dashboard
+            inputSec.classList.add('hidden');
+            dashboardSec.classList.remove('hidden');
+
+            currentOrgData = json.data;
+            renderOrgOverview();
+            setupOrgSubTabs();
+            
+            // Show first tab by default
+            switchOrgTab('org-tab-overview');
+            
+            // Global health indicator
+            const health = currentOrgData.predictions.predicted_health_score;
+            if (badge) {
+                badge.textContent = `Health: ${health}/100`;
+                badge.classList.remove('hidden');
+                badge.style.background = health > 70 ? 'var(--success)' : (health > 40 ? 'var(--warning)' : 'var(--danger)');
+            }
+
+        } catch (err) {
+            console.error('[OrgDash] Initialization failed:', err);
+        }
+    }
+
+    function initOrgInputForms() {
+        // Toggle manual form
+        const btnManual = document.getElementById('btn-show-manual');
+        const manualContainer = document.getElementById('org-manual-form-container');
+        if (btnManual && manualContainer) {
+            btnManual.onclick = () => manualContainer.classList.toggle('hidden');
+        }
+
+        // CSV Upload handling
+        const uploadInput = document.getElementById('org-csv-upload');
+        if (uploadInput) {
+            uploadInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const status = document.getElementById('org-upload-status');
+                status.textContent = 'Uploading...';
+                status.style.color = 'var(--primary)';
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const res = await fetch(`${API_BASE}/org/upload_csv`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                        body: formData
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        status.textContent = `Success: ${json.message}`;
+                        status.style.color = 'var(--success)';
+                        setTimeout(loadOrgDashboard, 1500); // Reload to show dash
+                    } else {
+                        throw new Error(json.detail || 'Upload failed');
+                    }
+                } catch (err) {
+                    status.textContent = `Error: ${err.message}`;
+                    status.style.color = 'var(--danger)';
+                }
+            };
+        }
+
+        // Manual form submission
+        const manualForm = document.getElementById('org-manual-form');
+        if (manualForm) {
+            manualForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const formData = new FormData(manualForm);
+                const data = {};
+                formData.forEach((val, key) => {
+                    // Convert numbers
+                    if (['revenue', 'total_cost', 'fixed_cost', 'variable_cost', 'cash_reserve', 'debt', 'growth_rate', 'customer_count', 'cac', 'ltv'].includes(key)) {
+                        data[key] = val ? parseFloat(val) : 0;
+                    } else {
+                        data[key] = val;
+                    }
+                });
+
+                try {
+                    const res = await fetch(`${API_BASE}/org/input_manual`, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}` 
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    const json = await res.json();
+                    if (json.success) {
+                        alert('Data point added! You can add more or view your dashboard.');
+                        loadOrgDashboard(); // Reload to update dash access
+                    } else {
+                        alert('Error: ' + json.detail);
+                    }
+                } catch (err) {
+                    alert('Request failed: ' + err.message);
+                }
+            };
+        }
+    }
+
+    // "Update Data" button functionality
+    const btnGotoInput = document.getElementById('goto-input-btn');
+    if (btnGotoInput) {
+        btnGotoInput.addEventListener('click', () => {
+             document.getElementById('sec-org-dashboard').classList.add('hidden');
+             document.getElementById('sec-org-input').classList.remove('hidden');
+             initOrgInputForms();
+        });
+    }
+
+    function setupOrgSubTabs() {
+        const tabs = document.querySelectorAll('.org-sub-tab');
+        tabs.forEach(tab => {
+            // Remove old listeners to prevent duplicates
+            const newTab = tab.cloneNode(true);
+            tab.parentNode.replaceChild(newTab, tab);
+            
+            newTab.addEventListener('click', () => {
+                const target = newTab.dataset.tab;
+                switchOrgTab(target);
+            });
+        });
+    }
+
+    function switchOrgTab(tabId) {
+        // Update tab buttons
+        document.querySelectorAll('.org-sub-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.tab === tabId);
+        });
+
+        // Update content sections
+        document.querySelectorAll('.org-tab-content').forEach(c => {
+            c.classList.add('hidden');
+        });
+        const targetSec = document.getElementById(tabId);
+        if (targetSec) targetSec.classList.remove('hidden');
+
+        // Trigger tab-specific rendering
+        if (tabId === 'org-tab-insights') renderOrgInsights();
+        if (tabId === 'org-tab-predictions') renderOrgPredictions();
+        if (tabId === 'org-tab-advisory') renderOrgAdvisory();
+        if (tabId === 'org-tab-summary') renderOrgSummary();
+    }
+
+    function renderOrgOverview() {
+        if (!currentOrgData) return;
+        const o = currentOrgData.overview;
+        const fmt = (n) => `$${Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+
+        document.getElementById('org-total-rev').textContent = fmt(o.total_revenue);
+        document.getElementById('org-total-exp').textContent = fmt(o.total_expenses);
+        document.getElementById('org-profit').textContent = fmt(o.total_profit);
+        document.getElementById('org-profit').style.color = o.total_profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        
+        document.getElementById('org-profit-margin').textContent = `${o.avg_profit_margin}%`;
+        document.getElementById('org-avg-growth').textContent = `${o.avg_growth_rate}%`;
+        document.getElementById('org-avg-health').textContent = `${o.avg_health_score}/100`;
+        document.getElementById('org-record-count').textContent = o.record_count.toLocaleString();
+    }
+
+    function renderOrgInsights() {
+        const c = currentOrgData.category_insights;
+        
+        // Industry breakdown bars
+        const breakdownContainer = document.getElementById('org-industry-breakdown');
+        const maxRev = Math.max(...c.by_industry.map(i => i.total_revenue));
+        
+        breakdownContainer.innerHTML = c.by_industry.map(ind => {
+            const pct = (ind.total_revenue / maxRev * 100);
+            return `
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
+                        <span>${ind.industry} (${ind.count})</span>
+                        <span style="color: var(--success); font-weight: 600;">$${Math.round(ind.total_revenue/1e6)}M</span>
+                    </div>
+                    <div style="background: var(--glass-bg); height: 6px; border-radius: 3px;">
+                        <div style="width: ${pct}%; background: var(--primary); height: 100%; border-radius: 3px;"></div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
+                        Margin: ${ind.avg_margin}% | Health: ${ind.avg_health}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('org-highest-cost-ind').textContent = c.highest_cost_industry;
+        document.getElementById('org-best-margin-ind').textContent = c.best_margin_industry;
+
+        // Anomalies
+        const anomalyContainer = document.getElementById('org-anomaly-list');
+        if (currentOrgData.anomalies.length === 0) {
+            anomalyContainer.innerHTML = '<div class="fallback">No major anomalies detected in the current dataset.</div>';
+        } else {
+            anomalyContainer.innerHTML = currentOrgData.anomalies.map(a => `
+                <div class="anomaly-item">
+                    <strong style="display: block;">${a.type}</strong>
+                    <span style="font-size: 0.85rem; color: var(--text-muted);">${a.description}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    function renderOrgPredictions() {
+        const p = currentOrgData.predictions;
+        document.getElementById('org-model-r2-health').textContent = p.model_metrics.health_r2;
+        document.getElementById('org-model-r2-profit').textContent = p.model_metrics.profit_r2;
+
+        const container = document.getElementById('org-prediction-chart-container');
+        const proj = p.projections;
+        const width = 600, height = 180, pad = 30;
+        
+        const allVals = [...proj.revenue, ...proj.cost];
+        const max = Math.max(...allVals), min = Math.min(...allVals), range = max - min || 1;
+
+        const getPts = (vals) => vals.map((v, i) => `${pad + (i/6)*(width-pad*2)},${height-pad - ((v-min)/range)*(height-pad*2)}`).join(' ');
+
+        container.innerHTML = `
+            <svg viewBox="0 0 ${width} ${height}" style="width:100%; height: auto; overflow: visible;">
+                <!-- Grid Lines -->
+                <line x1="${pad}" y1="${pad}" x2="${width-pad}" y2="${pad}" stroke="rgba(255,255,255,0.05)" />
+                <line x1="${pad}" y1="${height-pad}" x2="${width-pad}" y2="${height-pad}" stroke="rgba(255,255,255,0.1)" />
+                
+                <!-- Revenue Line -->
+                <polyline points="${getPts(proj.revenue)}" fill="none" stroke="var(--success)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <!-- Cost Line -->
+                <polyline points="${getPts(proj.cost)}" fill="none" stroke="var(--danger)" stroke-width="2" stroke-dasharray="4" />
+                
+                <!-- Labels -->
+                <text x="${pad}" y="${height-5}" fill="var(--text-muted)" font-size="10">${proj.labels[0]}</text>
+                <text x="${width-pad}" y="${height-5}" fill="var(--text-muted)" font-size="10" text-anchor="end">${proj.labels[6]} (Forecast)</text>
+                
+                <!-- Legend -->
+                <g transform="translate(${width-120}, 10)">
+                    <rect width="10" height="10" fill="var(--success)" /> <text x="15" y="9" fill="var(--text-muted)" font-size="9">Revenue</text>
+                    <rect width="10" height="10" y="15" fill="var(--danger)" /> <text x="15" y="24" fill="var(--text-muted)" font-size="9">Expenses</text>
+                </g>
+            </svg>
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; font-size: 0.85rem;">
+                <p><strong>ML Insight:</strong> Based on the <strong>${p.avg_growth_rate_pct}%</strong> average growth rate, revenue is projected to hit 
+                <span class="color-success" style="font-weight:700;">$${Math.round(proj.revenue[6]).toLocaleString()}</span> 
+                by ${proj.labels[6]}.</p>
+            </div>
+        `;
+    }
+
+    function renderOrgAdvisory() {
+        const container = document.getElementById('org-advisory-list');
+        container.innerHTML = currentOrgData.advisory.map(a => `
+            <div class="advisory-card ${a.category.toLowerCase()}">
+                <span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-primary); margin-bottom: 0.5rem; display: inline-block;">${a.category}</span>
+                <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5;">${a.text}</p>
+            </div>
+        `).join('');
+    }
+
+    function renderOrgSummary() {
+        const p = currentOrgData.predictions;
+        const health = p.predicted_health_score;
+        
+        const circle = document.getElementById('org-health-circle');
+        circle.textContent = health;
+        circle.style.borderColor = health > 70 ? 'var(--success)' : (health > 40 ? 'var(--warning)' : 'var(--danger)');
+        
+        const risk = document.getElementById('org-risk-label');
+        risk.textContent = `RISK LEVEL: ${p.predicted_risk_level.toUpperCase()}`;
+        risk.className = '';
+        risk.classList.add(p.predicted_risk_level.toLowerCase() === 'high' ? 'color-danger' : (p.predicted_risk_level.toLowerCase() === 'low' ? 'color-success' : 'color-warning'));
+
+        document.getElementById('org-summary-text').textContent = currentOrgData.summary;
+    }
+
+    // Refresh button
+    const refreshDatasetBtn = document.getElementById('refresh-dataset-btn');
+    if (refreshDatasetBtn) {
+        refreshDatasetBtn.addEventListener('click', loadOrgDashboard);
+    }
+
     function loadUserProfile() {
         const saved = JSON.parse(localStorage.getItem('userProfile') || '{}');
         const name = localStorage.getItem('userName') || '';
@@ -482,7 +780,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Security update button
     const setSecBtn = document.getElementById('set-sec-btn');
     if (setSecBtn) {
-        setSecBtn.addEventListener('click', () => {
+        setSecBtn.addEventListener('click', async () => {
             const curr = document.getElementById('set-pass-curr').value;
             const newPass = document.getElementById('set-pass').value;
             const confirm = document.getElementById('set-pass-confirm').value;
@@ -492,44 +790,89 @@ document.addEventListener('DOMContentLoaded', () => {
             if (newPass && newPass !== confirm) { alert('New passwords do not match.'); return; }
             if (newPass && newPass.length < 6) { alert('Password must be at least 6 characters.'); return; }
 
-            // Simulated save — would call backend in production
-            if (newEmail) localStorage.setItem('userEmail', newEmail);
-            addNotification('Security settings updated successfully! 🔐');
-            document.getElementById('set-pass-curr').value = '';
-            document.getElementById('set-pass').value = '';
-            document.getElementById('set-pass-confirm').value = '';
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`${API_BASE}/update_security`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        current_password: curr,
+                        new_email: newEmail || null,
+                        new_password: newPass || null
+                    })
+                });
+
+                const data = await res.json();
+                if (data.status === 'success') {
+                    if (newEmail) {
+                        localStorage.setItem('userEmail', newEmail);
+                    }
+                    alert('Security settings updated successfully! 🔐');
+                    document.getElementById('set-pass-curr').value = '';
+                    document.getElementById('set-pass').value = '';
+                    document.getElementById('set-pass-confirm').value = '';
+                } else {
+                    alert(`Error: ${data.detail || 'Could not update settings.'}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Network error updating security settings.');
+            }
         });
     }
 
-    // ---- Auth Logic ----
-    showSignupBtn.addEventListener('click', () => { window.location.hash = '#signup'; });
-    showLoginBtn.addEventListener('click', () => { window.location.hash = '#login'; });
-    showOrgSignupBtn.addEventListener('click', () => { window.location.hash = '#org-signup'; });
-    showOrgLoginBtn.addEventListener('click', () => { window.location.hash = '#org-login'; });
+    // ---- Auth Tabs Logic ----
+    const tabIndividual = document.getElementById('tab-individual');
+    const tabOrganization = document.getElementById('tab-organization');
+    const individualAuth = document.getElementById('individual-auth');
+    const organizationAuth = document.getElementById('organization-auth');
 
-    // Tab Switching
-    function switchAuthTab(type) {
-        if (type === 'individual') {
+    if (tabIndividual && tabOrganization) {
+        tabIndividual.addEventListener('click', () => {
             tabIndividual.classList.add('active');
             tabOrganization.classList.remove('active');
             individualAuth.classList.remove('hidden');
             organizationAuth.classList.add('hidden');
-        } else {
+        });
+        tabOrganization.addEventListener('click', () => {
             tabOrganization.classList.add('active');
             tabIndividual.classList.remove('active');
             organizationAuth.classList.remove('hidden');
             individualAuth.classList.add('hidden');
-        }
+        });
     }
 
-    tabIndividual.addEventListener('click', () => {
-        window.location.hash = '#login';
+    // ---- Auth Logic ----
+    showSignupBtn.addEventListener('click', () => {
+        loginForm.parentElement.classList.add('hidden');
+        signupForm.parentElement.classList.remove('hidden');
     });
 
-    tabOrganization.addEventListener('click', () => {
-        window.location.hash = '#org-login';
+    showLoginBtn.addEventListener('click', () => {
+        signupForm.parentElement.classList.add('hidden');
+        loginForm.parentElement.classList.remove('hidden');
     });
-    
+
+    const showOrgSignupBtn = document.getElementById('show-org-signup');
+    const showOrgLoginBtn = document.getElementById('show-org-login');
+    const orgLoginForm = document.getElementById('org-login-form');
+    const orgSignupForm = document.getElementById('org-signup-form');
+
+    if (showOrgSignupBtn) {
+        showOrgSignupBtn.addEventListener('click', () => {
+            orgLoginForm.parentElement.classList.add('hidden');
+            orgSignupForm.parentElement.classList.remove('hidden');
+        });
+        showOrgLoginBtn.addEventListener('click', () => {
+            orgSignupForm.parentElement.classList.add('hidden');
+            orgLoginForm.parentElement.classList.remove('hidden');
+        });
+    }
+
+
     async function handleAuth(url, payload) {
         const endpoint = `${API_BASE}${url}`;
         console.log(`[Auth] Attempting ${url} →`, endpoint, 'Payload captured:', { ...payload, password: '***' });
@@ -562,20 +905,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && data.success) {
                 BACKEND_AVAILABLE = true;
-                const isOrg = url === '/org_login' || url === '/org_signup';
-                console.log('[Auth] ✅ Backend authentication successful. Org?', isOrg);
+                const isOrg = url.includes('org_');
+                console.log(`[Auth] ✅ Backend authentication successful (${isOrg ? 'Organization' : 'Individual'}). Token received:`, data.token ? 'yes' : 'no');
+                
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('userType', isOrg ? 'organization' : 'individual');
+                
                 if (isOrg) {
-                    localStorage.setItem('orgName', payload.orgName || data.orgName || '');
+                    localStorage.setItem('userEmail', data.org_name || payload.orgName);
+                    localStorage.setItem('userName', data.org_name || payload.orgName);
                 } else {
-                    localStorage.setItem('userEmail', payload.identifier || payload.email || '');
-                    if (data.name) localStorage.setItem('userName', data.name);
+                    const resolvedEmail = data.email || payload.email || payload.login_identifier;
+                    localStorage.setItem('userEmail', resolvedEmail);
+                    if (data.name) {
+                        localStorage.setItem('userName', data.name);
+                        console.log('[Auth] User name stored:', data.name);
+                    }
                 }
+                
                 updateAccountBar();
+                console.log('[Auth] Redirecting to Dashboard...');
                 window.location.hash = isOrg ? '#org-dashboard' : '#input';
             } else {
                 BACKEND_AVAILABLE = true;
+                // Backend responded but credentials were wrong
+                // FastAPI HTTPException returns {"detail": "..."}, our auth returns {"error": "..."}
                 const msg = data.error || data.detail || 'Authentication failed.';
                 console.warn('[Auth] ❌ Auth rejected by backend:', msg);
                 showAuthError(msg);
@@ -591,16 +945,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // ---- Fallback: Mock Authentication via localStorage ----
                 const isMockLogin = url === '/login';
-                console.log(`[Auth] Running mock ${isMockLogin ? 'login' : 'signup'} for:`, payload.email);
+                const mockEmailOrId = payload.email || payload.login_identifier;
+                console.log(`[Auth] Running mock ${isMockLogin ? 'login' : 'signup'} for:`, mockEmailOrId);
                 const mockResult = isMockLogin
-                    ? mockLogin(payload.email, payload.password)
-                    : mockSignup(payload.name, payload.email, payload.password);
+                    ? mockLogin(mockEmailOrId, payload.password)
+                    : mockSignup(payload.name, mockEmailOrId, payload.password);
 
                 console.log('[Auth] Mock result:', { ...mockResult, token: mockResult.token ? '***' : undefined });
 
                 if (mockResult.success) {
                     localStorage.setItem('token', mockResult.token);
-                    localStorage.setItem('userEmail', payload.email);
+                    localStorage.setItem('userEmail', mockEmailOrId);
                     if (mockResult.name) localStorage.setItem('userName', mockResult.name);
 
                     // Show non-blocking notice about offline mode
@@ -626,12 +981,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const identifier = document.getElementById('login-email').value.trim();
+        const loginIdentifier = document.getElementById('login-email').value.trim();
         const password = document.getElementById('login-password').value;
-        const payload = { login_identifier: identifier, password };
-        hideAuthError();
+        if (!loginIdentifier || !password) {
+            showAuthError('Please enter both email/username and password.');
+            return;
+        }
+        const payload = { login_identifier: loginIdentifier, password };
         handleAuth('/login', payload);
     });
+
+    if (orgLoginForm) {
+        orgLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const orgName = document.getElementById('org-login-name').value.trim();
+            const password = document.getElementById('org-login-password').value;
+            if (!orgName || !password) {
+                showAuthError('Please enter organization name and password.');
+                return;
+            }
+            handleAuth('/org_login', { orgName, password });
+        });
+
+        orgSignupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const orgName = document.getElementById('org-signup-name').value.trim();
+            const password = document.getElementById('org-signup-password').value;
+            if (!orgName || !password) {
+                showAuthError('Please fill out all required fields.');
+                return;
+            }
+            handleAuth('/org_signup', { orgName, password });
+        });
+    }
 
     signupForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -648,32 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         const payload = { name, email, password };
-        hideAuthError();
         handleAuth('/signup', payload);
-    });
-
-    orgLoginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const orgName = document.getElementById('org-login-name').value.trim();
-        const password = document.getElementById('org-login-password').value;
-        const payload = { orgName, password };
-        hideAuthError();
-        handleAuth('/org_login', payload);
-    });
-
-    orgSignupForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const orgName = document.getElementById('org-signup-name').value.trim();
-        const password = document.getElementById('org-signup-password').value;
-        const country = document.getElementById('org-signup-country').value.trim();
-        const employees = parseInt(document.getElementById('org-signup-employees').value, 10);
-        
-        const payload = { 
-            orgName, password, country, 
-            numberOfEmployees: isNaN(employees) ? null : employees 
-        };
-        hideAuthError();
-        handleAuth('/org_signup', payload);
     });
     
     function handleLogout() {
@@ -681,16 +1038,14 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.removeItem('token');
         localStorage.removeItem('userName');
         localStorage.removeItem('userEmail');
-        localStorage.removeItem('userType');
-        localStorage.removeItem('orgName');
         window.appState = null;
-        window.location.hash = '#home';
+        window.location.hash = '#login';
         
         // Clear forms
-        if (loginForm) loginForm.reset();
-        if (signupForm) signupForm.reset();
-        if (advisorForm) advisorForm.reset();
-        if (chatMessages) chatMessages.innerHTML = `
+        loginForm.reset();
+        signupForm.reset();
+        advisorForm.reset();
+        chatMessages.innerHTML = `
             <div class="chat-msg ai-msg">
                 <p>Hello! I'm your AI Coach. Feel free to ask me anything about your analysis or how to improve your finances.</p>
             </div>
@@ -715,45 +1070,12 @@ document.addEventListener('DOMContentLoaded', () => {
         userAvatar.innerText = name.charAt(0).toUpperCase();
 
         accountBar.classList.remove('hidden');
-        renderNotifications();
     }
 
-    function addNotification(message) {
-        notifications.push({ id: Date.now(), text: message, read: false });
-        renderNotifications();
-    }
-
-    function renderNotifications() {
-        if (!notifBadge || !notifList) return;
-        
-        const unreadCount = notifications.filter(n => !n.read).length;
-        if (unreadCount > 0) {
-            notifBadge.classList.remove('hidden');
-        } else {
-            notifBadge.classList.add('hidden');
-        }
-
-        if (notifications.length === 0) {
-            notifList.innerHTML = '<li class="empty-notif">No new notifications</li>';
-            return;
-        }
-
-        notifList.innerHTML = '';
-        // Insert most recent first
-        [...notifications].reverse().forEach(n => {
-            const li = document.createElement('li');
-            li.innerText = n.text;
-            if (!n.read) li.classList.add('unread');
-            
-            // Mark as read on click
-            li.addEventListener('click', (e) => {
-                e.stopPropagation(); // prevent dropdown from closing if inside dropdown
-                n.read = true;
-                renderNotifications();
-            });
-            notifList.appendChild(li);
-        });
-    }
+    // Optional global notification interface to avoid breaking existing usages
+    window.addNotification = (message) => {
+        console.log('Notification triggered:', message);
+    };
 
     // Removed click behavior for accountProfileBtn because it is now CSS hover-based
     // Removed document click listener for accountDropdown closing because it is CSS hover-based
@@ -1429,140 +1751,61 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ── NEW HOMEPAGE BUTTON WIRING ──
     const heroCta = document.getElementById('hero-cta-btn');
-    if (heroCta) {
-        heroCta.addEventListener('click', () => {
-            window.location.hash = '#login';
+    if (heroCta) heroCta.addEventListener('click', () => { window.location.hash = '#login'; });
+
+    const navGetStarted = document.getElementById('nav-get-started-btn');
+    if (navGetStarted) navGetStarted.addEventListener('click', () => { window.location.hash = '#login'; });
+
+    const navGetStartedMobile = document.getElementById('nav-auth-btn-mobile');
+    if (navGetStartedMobile) navGetStartedMobile.addEventListener('click', () => { window.location.hash = '#login'; });
+
+    const platformCta = document.getElementById('platform-cta-btn');
+    if (platformCta) platformCta.addEventListener('click', () => { window.location.hash = '#login'; });
+
+    const ctaStartBtn = document.getElementById('cta-start-btn');
+    if (ctaStartBtn) ctaStartBtn.addEventListener('click', () => { window.location.hash = '#login'; });
+
+    // ── Mobile hamburger toggle ──
+    const hamburger = document.getElementById('nav-hamburger');
+    const mobileMenu = document.getElementById('nav-mobile-menu');
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        // Close mobile menu when a link inside it is clicked
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
         });
     }
 
-    // Smooth Scroll for landing page links
-    document.querySelectorAll('.landing-navbar a[href^="#"]').forEach(anchor => {
+    // ── Smooth scroll: covers all homepage anchor links ──
+    document.querySelectorAll('#home-section a[href^="#"], .landing-navbar a[href^="#"], .nav-mobile-menu a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            e.preventDefault();
             const targetId = this.getAttribute('href');
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-                targetEl.scrollIntoView({
-                    behavior: 'smooth'
-                });
+            if (!targetId || targetId === '#') return;
+            // Only intercept links to in-page ids (not hash-router routes)
+            const inPageIds = ['#hp-features', '#home-features', '#home-platform', '#hp-about', '#home-about', '#home-contact'];
+            if (inPageIds.includes(targetId)) {
+                e.preventDefault();
+                const targetEl = document.querySelector(targetId);
+                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
             }
         });
     });
 
-    //    // ---- Organization Forms & Dashboard ----
-
-    const secOrgInput = document.getElementById('sec-org-input');
-    const secOrgDashboard = document.getElementById('sec-org-dashboard');
-    const orgCsvForm = document.getElementById('org-csv-upload-form');
-    const orgManualForm = document.getElementById('org-manual-form');
-    const orgLogoutBtn = document.getElementById('org-logout-btn');
-    const resetAnalysisBtn = document.getElementById('reset-analysis-btn');
-
-    if (orgLogoutBtn) orgLogoutBtn.addEventListener('click', handleLogout);
-
-    if (orgCsvForm) {
-        orgCsvForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const fileInput = document.getElementById('org-csv-file');
-            if(!fileInput.files.length) return alert('Select a file.');
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-            reader.onload = async function(evt) {
-                const b64 = evt.target.result.split(',')[1];
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${API_BASE}/org/upload_csv`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ filename: file.name, file_base64: b64, type: 'text/csv' })
-                });
-                if(res.ok) { alert('Uploaded!'); loadOrgDashboard(); }
-                else { const err = await res.json(); alert('Failed: ' + err.detail); }
-            };
-            reader.readAsDataURL(file);
-        });
-    }
-
-    if (orgManualForm) {
-        orgManualForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                revenue: parseFloat(document.getElementById('org-man-rev').value),
-                total_cost: parseFloat(document.getElementById('org-man-cost').value),
-                profit: parseFloat(document.getElementById('org-man-profit').value),
-                growth_rate: parseFloat(document.getElementById('org-man-growth').value || 0),
-            };
-            const token = localStorage.getItem('token');
-            const res = await fetch(`${API_BASE}/org/input_manual`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            if(res.ok) loadOrgDashboard();
-            else { const err = await res.json(); alert('Failed: ' + err.detail); }
-        });
-    }
-
-    if (resetAnalysisBtn) {
-        resetAnalysisBtn.addEventListener('click', async () => {
-            if(!confirm('Are you sure you want to permanently delete all organization data?')) return;
-            const token = localStorage.getItem('token');
-            const res = await fetch(`${API_BASE}/org/reset_analysis`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if(res.ok) {
-                alert('Analysis reset!');
-                loadOrgDashboard();
-            }
-        });
-    }
-
-    // Toggle sub-tabs
-    document.querySelectorAll('.org-sub-tab').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.org-sub-tab').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.org-tab-content').forEach(c => c.classList.add('hidden'));
-            btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.remove('hidden');
-        });
-    });
-
-    // We export or define loadOrgDashboard here
-    window.loadOrgDashboard = async function() {
-        secOrgInput.classList.add('hidden');
-        secOrgDashboard.classList.add('hidden');
-        dashboardContainer.classList.add('hidden');
-        
-        const token = localStorage.getItem('token');
-        try {
-            const res = await fetch(`${API_BASE}/org/dashboard`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
-            if(!data.data && data.message === "No data provided yet") {
-                secOrgInput.classList.remove('hidden');
-            } else {
-                secOrgDashboard.classList.remove('hidden');
-                // Basic binding for brevity (could be expanded)
-                if(data.data) {
-                    const d = data.data;
-                    document.getElementById('org-total-rev').innerText = '$' + (d.total_revenue_avg || 0).toLocaleString();
-                    document.getElementById('org-total-exp').innerText = '$' + (d.total_cost_avg || 0).toLocaleString();
-                    document.getElementById('org-profit').innerText = '$' + (d.total_profit_avg || 0).toLocaleString();
-                    document.getElementById('org-record-count').innerText = d.records_count || 1;
-                    
-                    const health = typeof d.predicted_health_score === 'number' ? Math.round(d.predicted_health_score) : 50;
-                    document.getElementById('org-avg-health').innerText = health + '/100';
-                    document.getElementById('org-health-circle').innerText = health;
-                    document.getElementById('org-health-badge').innerText = 'Health: ' + health;
-                    document.getElementById('org-health-badge').classList.remove('hidden');
-                }
-            }
-        } catch (e) {
-            console.error('Error fetching org dash', e);
+    // ── Navbar scroll-spy: add shadow on scroll ──
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('landing-navbar');
+        if (!navbar) return;
+        if (window.scrollY > 20) {
+            navbar.style.boxShadow = '0 4px 24px rgba(30,58,138,0.1)';
+        } else {
+            navbar.style.boxShadow = '0 2px 20px rgba(30,58,138,0.05)';
         }
-    };
-    
+    }, { passive: true });
+
+    // Boot
     init();
 });

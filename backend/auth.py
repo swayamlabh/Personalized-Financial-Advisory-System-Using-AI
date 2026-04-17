@@ -298,11 +298,3 @@ def get_org_data_rows_from_db(org_name):
     rows = [dict(r) for r in cursor.fetchall()]
     conn.close()
     return rows
-
-def clear_org_data(org_name):
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM org_financial_data WHERE org_name = ?", (org_name,))
-    conn.commit()
-    conn.close()
-    return True

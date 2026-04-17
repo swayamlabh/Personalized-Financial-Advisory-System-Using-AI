@@ -1,0 +1,398 @@
+diff --git a/frontend/styles.css b/frontend/styles.css
+index 22fea38..2560860 100644
+--- a/frontend/styles.css
++++ b/frontend/styles.css
+@@ -2259,113 +2259,323 @@ select.readonly-input[disabled]:focus {
+     border-bottom: 2px solid var(--primary);
+ }
+ 
+-/* Organization Sub-tabs */
+-.org-sub-tabs {
++/* ===================== ORGANIZATION ENHANCEMENTS ===================== */
++
++/* Onboarding Grid */
++.org-input-grid {
++    display: grid;
++    grid-template-columns: repeat(3, 1fr);
++    gap: 1.5rem;
++    margin-top: 1rem;
++}
++
++.input-card {
++    padding: 2rem 1.5rem;
++    text-align: center;
++    transition: all var(--transition-normal);
+     display: flex;
+-    gap: 0.5rem;
+-    margin-bottom: 2rem;
+-    overflow-x: auto;
+-    padding-bottom: 0.5rem;
++    flex-direction: column;
++    align-items: center;
++    border: 1px solid var(--glass-border);
++}
++
++.input-card:hover {
++    transform: translateY(-5px);
++    border-color: var(--primary);
++    background: rgba(255, 255, 255, 0.04);
++}
++
++.input-card.highlighted {
++    border-color: var(--primary);
++    box-shadow: 0 0 15px rgba(37, 99, 235, 0.15);
++}
++
++.card-icon {
++    font-size: 2.5rem;
++    margin-bottom: 1rem;
++}
++
++.card-desc {
++    color: var(--text-muted);
++    font-size: 0.85rem;
++    margin-bottom: 1.5rem;
++    line-height: 1.4;
++}
++
++.upload-area {
++    position: relative;
++    width: 100%;
++    margin-bottom: 1rem;
++}
++
++.upload-area input[type="file"] {
++    opacity: 0;
++    position: absolute;
++    width: 100%;
++    height: 100%;
++    cursor: pointer;
+ }
+ 
+-.org-sub-tab {
++.file-label {
++    display: block;
++    padding: 0.8rem;
+     background: rgba(255, 255, 255, 0.05);
++    border: 1px dashed var(--glass-border);
++    border-radius: 8px;
++    font-size: 0.85rem;
++    color: var(--text-muted);
++}
++
++.guidelines {
++    margin-top: 1.5rem;
++    text-align: left;
++    width: 100%;
++    border-top: 1px solid rgba(255, 255, 255, 0.05);
++    padding-top: 1rem;
++}
++
++.guidelines h4 {
++    font-size: 0.75rem;
++    text-transform: uppercase;
++    color: var(--text-main);
++    margin-bottom: 0.5rem;
++    letter-spacing: 0.5px;
++}
++
++.guidelines ul {
++    list-style: none;
++    font-size: 0.7rem;
++    color: var(--text-muted);
++    line-height: 1.4;
++}
++
++.guidelines li strong { color: var(--text-main); }
++
++/* Sidebar Layout */
++.org-layout {
++    display: flex;
++    min-height: 700px;
++    background: var(--glass-bg);
++    border-radius: 12px;
+     border: 1px solid var(--glass-border);
++    overflow: hidden;
++}
++
++.org-sidebar {
++    width: 260px;
++    background: rgba(0, 0, 0, 0.2);
++    border-right: 1px solid var(--glass-border);
++    display: flex;
++    flex-direction: column;
++    padding: 1.5rem;
++}
++
++.sidebar-header {
++    display: flex;
++    align-items: center;
++    gap: 1rem;
++    margin-bottom: 2.5rem;
++}
++
++.org-logo {
++    width: 40px;
++    height: 40px;
++    background: linear-gradient(135deg, var(--primary), #8b5cf6);
++    color: white;
++    border-radius: 10px;
++    display: flex;
++    align-items: center;
++    justify-content: center;
++    font-weight: 800;
++    font-size: 1.2rem;
++}
++
++.sidebar-header h3 {
++    font-size: 1.1rem;
++    font-weight: 700;
++    margin: 0;
++}
++
++.org-nav {
++    flex: 1;
++    display: flex;
++    flex-direction: column;
++    gap: 0.5rem;
++}
++
++.org-nav-item {
++    display: flex;
++    align-items: center;
++    gap: 0.75rem;
++    padding: 0.8rem 1rem;
++    background: transparent;
++    border: none;
+     color: var(--text-muted);
+-    padding: 0.6rem 1.2rem;
+     border-radius: 8px;
++    cursor: pointer;
+     font-size: 0.9rem;
+     font-weight: 500;
+-    cursor: pointer;
+-    white-space: nowrap;
+-    transition: all var(--transition-fast);
++    transition: all 0.2s;
++    text-align: left;
+ }
+ 
+-.org-sub-tab:hover {
+-    background: rgba(255, 255, 255, 0.1);
+-    color: var(--text-primary);
++.org-nav-item:hover {
++    background: rgba(255, 255, 255, 0.05);
++    color: var(--text-main);
+ }
+ 
+-.org-sub-tab.active {
++.org-nav-item.active {
+     background: var(--primary);
+     color: white;
+-    border-color: var(--primary);
+     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+ }
+ 
+-/* Health Badge & Circle */
+-.health-badge {
+-    background: var(--primary);
+-    color: white;
+-    padding: 0.3rem 0.8rem;
+-    border-radius: 20px;
+-    font-size: 0.8rem;
++.org-nav-item .icon { font-size: 1.1rem; }
++
++.nav-divider {
++    height: 1px;
++    background: rgba(255, 255, 255, 0.1);
++    margin: 0.5rem 0;
++}
++
++.sidebar-footer {
++    padding-top: 1.5rem;
++    display: flex;
++    flex-direction: column;
++    gap: 0.75rem;
++}
++
++/* Content Area */
++.org-main-content {
++    flex: 1;
++    padding: 2rem;
++    overflow-y: auto;
++    max-height: 800px;
++}
++
++.content-header {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++    margin-bottom: 2rem;
++    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
++    padding-bottom: 1rem;
++}
++
++.content-header h2 {
++    font-size: 1.5rem;
+     font-weight: 700;
+ }
+ 
+-.health-circle {
+-    width: 120px;
+-    height: 120px;
+-    border-radius: 50%;
+-    border: 8px solid var(--primary);
++/* Modals */
++.modal-overlay {
++    position: fixed;
++    top: 0; left: 0; right: 0; bottom: 0;
++    background: rgba(0, 0, 0, 0.8);
++    backdrop-filter: blur(8px);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+-    font-size: 2.2rem;
+-    font-weight: 800;
+-    color: var(--text-primary);
+-    background: var(--glass-bg);
+-    box-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
+-    margin-bottom: 1rem;
++    z-index: 1000;
+ }
+ 
+-/* Advisory & Anomaly Cards */
+-.advisory-grid {
+-    display: grid;
+-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+-    gap: 1.5rem;
+-    margin-top: 1rem;
++.modal-content {
++    width: 90%;
++    max-width: 800px;
++    max-height: 90vh;
++    padding: 0 !important;
++    display: flex;
++    flex-direction: column;
+ }
+ 
+-.advisory-card {
+-    padding: 1.5rem;
+-    background: rgba(255, 255, 255, 0.03);
+-    border-left: 4px solid var(--primary);
+-    border-radius: 8px;
++.modal-header {
++    padding: 1.5rem 2rem;
++    border-bottom: 1px solid var(--glass-border);
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
+ }
+ 
+-.advisory-card.urgent { border-left-color: var(--danger); }
+-.advisory-card.strategic { border-left-color: var(--primary); }
+-.advisory-card.growth { border-left-color: var(--success); }
++.modal-header h3 { font-size: 1.25rem; font-weight: 700; }
+ 
+-.anomaly-item {
+-    padding: 1rem;
+-    background: rgba(239, 68, 68, 0.05);
+-    border-radius: 8px;
+-    margin-bottom: 0.8rem;
+-    border-left: 3px solid var(--danger);
++.close-modal {
++    background: transparent;
++    border: none;
++    color: var(--text-muted);
++    font-size: 1.5rem;
++    cursor: pointer;
+ }
+ 
+-.stat-value {
+-    font-size: 1.4rem;
++.manual-form-scroll {
++    padding: 2rem;
++    overflow-y: auto;
++    flex: 1;
++}
++
++.manual-group {
++    margin-bottom: 2rem;
++}
++
++.manual-group h4 {
++    font-size: 0.9rem;
++    text-transform: uppercase;
++    color: var(--primary);
++    margin-bottom: 1rem;
++    letter-spacing: 1px;
+     font-weight: 700;
+-    display: block;
+-    margin-top: 0.3rem;
+ }
+ 
+-.stat-row {
++.modal-footer {
++    padding: 1.5rem 2rem;
++    border-top: 1px solid var(--glass-border);
+     display: flex;
+-    justify-content: space-between;
+-    padding: 0.8rem 0;
+-    border-bottom: 1px solid rgba(255,255,255,0.05);
++    justify-content: flex-end;
+ }
+ 
+-.badge-ai {
+-    background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+-    color: white;
+-    padding: 0.2rem 0.6rem;
+-    border-radius: 4px;
+-    font-size: 0.7rem;
+-    text-transform: uppercase;
+-    letter-spacing: 0.5px;
++/* Circular Chart Improvement */
++.circular-chart {
++    display: block;
++    margin: 10px auto;
++    max-width: 80%;
++    max-height: 250px;
++}
++
++.circle-bg {
++    fill: none;
++    stroke: rgba(255, 255, 255, 0.05);
++    stroke-width: 2.8;
++}
++
++.circle {
++    fill: none;
++    stroke-width: 2.8;
++    stroke-linecap: round;
++    transition: stroke-dasharray 0.3s ease;
++    stroke: var(--primary);
++}
++
++.percentage {
++    fill: var(--text-main);
++    font-family: inherit;
++    font-size: 0.5rem;
++    text-anchor: middle;
++    font-weight: 700;
++}
++
++/* Helper Buttons */
++.btn-danger-soft {
++    background: rgba(239, 68, 68, 0.1);
++    color: var(--danger);
++    border: 1px solid rgba(239, 68, 68, 0.2);
++    padding: 0.6rem;
++    border-radius: 8px;
++    font-size: 0.85rem;
++    font-weight: 500;
++    cursor: pointer;
++    transition: all 0.2s;
++}
++
++.btn-danger-soft:hover {
++    background: rgba(239, 68, 68, 0.2);
++    border-color: var(--danger);
+ }
