@@ -27,9 +27,12 @@ The system provides:
 
 <img width="1421" height="912" alt="Screenshot 2026-04-18 053241" src="https://github.com/user-attachments/assets/2537c14c-5a2b-4a5c-a0e9-50f805e701a3" />
 
+
 <img width="1733" height="902" alt="Screenshot 2026-04-18 053142" src="https://github.com/user-attachments/assets/1bb4873e-6cb2-4dee-9d97-1f0ae1569edb" />
 
+
 <img width="1829" height="906" alt="Screenshot 2026-04-18 053152" src="https://github.com/user-attachments/assets/944a1eaa-3b78-43f1-b668-c7cbdabe45fe" />
+
 
 <img width="1857" height="897" alt="Screenshot 2026-04-18 053232" src="https://github.com/user-attachments/assets/f620f386-6ade-4dd7-9079-55c19fbe5b59" />
 
