@@ -22,11 +22,9 @@ The system provides:
 
 ---
 
-🎥 Demo Video
+🎥 Demo
+<img width="1421" height="912" alt="Screenshot 2026-04-18 053241" src="https://github.com/user-attachments/assets/2537c14c-5a2b-4a5c-a0e9-50f805e701a3" />
 
-👉 Add your demo video link below
-
-[Watch Demo Video Here]
 
 ---
 
