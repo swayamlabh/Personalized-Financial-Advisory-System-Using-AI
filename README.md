@@ -40,13 +40,6 @@ The system provides:
 
 ---
 
-🌐 Live Deployment
-
-- 🔗 Frontend (Vercel): "YOUR_FRONTEND_URL"
-- 🔗 Backend (Render): "YOUR_BACKEND_URL"
-
----
-
 🧠 Key Features
 
 👤 Individual Dashboard
