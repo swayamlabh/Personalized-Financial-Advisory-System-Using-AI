@@ -74,6 +74,43 @@ class MLPipeline:
 
         self._trained = True
 
+    def _calculate_heuristic_health(self, latest: pd.Series) -> float:
+        """
+        Calculates a financial health score (0-100) based on unit economics
+        when a full ML model is not yet trained.
+        """
+        score = 50.0 # Base score
+
+        # 1. Profit Margin (up to +20 or -30)
+        margin = float(latest.get('profit_margin', 0))
+        if margin > 0.3: score += 20
+        elif margin > 0.1: score += 10
+        elif margin < -0.2: score -= 30
+        elif margin < 0: score -= 15
+
+        # 2. Runway (up to +20 or -20)
+        runway = float(latest.get('runway_months', 12))
+        if runway > 18: score += 20
+        elif runway > 12: score += 10
+        elif runway < 3: score -= 20
+        elif runway < 6: score -= 10
+
+        # 3. Growth (up to +10)
+        growth = float(latest.get('growth_rate', 0))
+        if growth > 20: score += 10
+        elif growth > 5: score += 5
+
+        # 4. CAC/LTV (up to +10)
+        cac = latest.get('cac', 0)
+        ltv = latest.get('ltv', 0)
+        if cac > 0 and ltv > 0:
+            ratio = ltv / cac
+            if ratio > 5: score += 10
+            elif ratio > 3: score += 5
+            elif ratio < 1.5: score -= 10
+
+        return float(np.clip(score, 0, 100))
+
     def predict_from_industry(self, df: pd.DataFrame, industry: str = None) -> dict:
         df.columns = [c.lower() for c in df.columns]
         
@@ -81,26 +118,37 @@ class MLPipeline:
         subset = df[df['industry'] == industry] if industry and industry in df['industry'].values else df
         avg = subset.mean(numeric_only=True)
         
-        predicted_health = float(avg.get('health_score', 50))
-        predicted_profit = float(avg.get('profit', 0))
+        # Use latest record if available for health/profit to avoid "bogus" averages
+        latest = df.iloc[-1]
         
-        # If model is trained, try to use it for a more refined current-state score
+        predicted_health = self._calculate_heuristic_health(latest)
+        predicted_profit = float(latest.get('profit', avg.get('profit', 0)))
+        
+        # If model is trained, use it to refine health score
         if self._trained and self.health_model:
             try:
-                h_feat = np.array([[avg.get(c, 0) for c in self.feature_cols_health]])
+                h_feat = np.array([[latest.get(c, 0) for c in self.feature_cols_health]])
                 h_feat_scaled = self.scaler_health.transform(h_feat)
-                predicted_health = float(np.clip(self.health_model.predict(h_feat_scaled)[0], 0, 100))
+                # Blend heuristic with model if model exists
+                model_health = float(self.health_model.predict(h_feat_scaled)[0])
+                predicted_health = (predicted_health * 0.4) + (model_health * 0.6)
+                predicted_health = float(np.clip(predicted_health, 0, 100))
             except:
                 pass
 
-        # Projections using growth_rate
-        avg_growth = float(avg.get('growth_rate', 0.05)) # default 5%
-        avg_revenue = float(avg.get('revenue', 0))
-        avg_cost    = float(avg.get('total_cost', 0))
+        # Projections strictly based on input growth_rate
+        # For organizations, growth_rate is usually stored as a percentage (e.g. 15 for 15%)
+        # But ml_pipeline expects decimal. Let's handle both.
+        raw_growth = float(latest.get('growth_rate', 0))
+        avg_growth = raw_growth / 100.0 if raw_growth > 1.0 else raw_growth
+        
+        avg_revenue = float(latest.get('revenue', 0))
+        avg_cost    = float(latest.get('total_cost', 0))
 
         periods = ["Now", "M+1", "M+2", "M+3", "M+4", "M+5", "M+6"]
+        # Strictly linear projection: Revenue grows by growth_rate, Cost grows by growth_rate * 0.9 (efficiency)
         proj_rev    = [round(avg_revenue * ((1 + avg_growth) ** i), 2)    for i in range(7)]
-        proj_cost   = [round(avg_cost    * ((1 + avg_growth*0.9)**i), 2)  for i in range(7)]
+        proj_cost   = [round(avg_cost    * ((1 + avg_growth * 0.9) ** i), 2)  for i in range(7)]
         proj_profit = [round(r - c, 2) for r, c in zip(proj_rev, proj_cost)]
 
         risk_label = "Low" if predicted_health >= 70 else "Medium" if predicted_health >= 40 else "High"

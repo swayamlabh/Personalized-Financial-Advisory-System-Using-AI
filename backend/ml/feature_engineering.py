@@ -16,99 +16,101 @@ class FeatureEngineer:
         return df
 
     def generate_overview(self, df: pd.DataFrame) -> dict:
-        total_rev  = float(df['revenue'].sum())
-        total_cost = float(df['total_cost'].sum())
-        total_prof = float(df['profit'].sum())
-        avg_margin = float(df['profit_margin'].mean())
-        avg_health = float(df['health_score'].mean())
-        avg_growth = float(df['growth_rate'].mean())
-
+        latest = df.iloc[-1]
+        
         return {
-            "total_revenue":     round(total_rev,  2),
-            "total_expenses":    round(total_cost, 2),
-            "total_profit":      round(total_prof, 2),
-            "avg_profit_margin": round(avg_margin * 100, 2),
-            "avg_health_score":  round(avg_health, 1),
-            "avg_growth_rate":   round(avg_growth * 100, 2),
-            "record_count":      len(df),
+            "total_revenue":     round(float(latest['revenue']), 2),
+            "total_expenses":    round(float(latest['total_cost']), 2),
+            "total_profit":      round(float(latest['profit']), 2),
+            "avg_profit_margin": round(float(latest['profit_margin']) * 100, 2),
+            "avg_health_score":  round(float(latest.get('health_score', 0)), 1),
+            "avg_growth_rate":   round(float(latest.get('growth_rate', 0)), 2),
+            "record_count":      1,
         }
 
     def generate_category_insights(self, df: pd.DataFrame) -> dict:
-        # By industry
-        by_industry = df.groupby('industry').agg(
-            total_revenue=('revenue',   'sum'),
-            total_cost=   ('total_cost','sum'),
-            total_profit= ('profit',    'sum'),
-            avg_margin=   ('profit_margin','mean'),
-            avg_health=   ('health_score','mean'),
-            count=        ('revenue',   'count'),
-        ).reset_index()
-        by_industry['avg_margin'] = (by_industry['avg_margin'] * 100).round(2)
-        by_industry['avg_health'] = by_industry['avg_health'].round(1)
-        industry_list = by_industry.to_dict(orient='records')
-
-        # By stage
-        by_stage = df.groupby('stage').agg(
-            avg_revenue= ('revenue',       'mean'),
-            avg_profit=  ('profit',        'mean'),
-            avg_health=  ('health_score',  'mean'),
-            count=       ('revenue',       'count'),
-        ).reset_index()
-        stage_list = by_stage.round(2).to_dict(orient='records')
-
-        # By risk level
-        risk_dist = df['risk_level'].value_counts().to_dict()
-
-        # Highest cost industry
-        top_cost_row = by_industry.loc[by_industry['total_cost'].idxmax()]
-
-        # Best margin industry
-        best_margin_row = by_industry.loc[by_industry['avg_margin'].idxmax()]
+        latest = df.iloc[-1]
+        
+        # Unit Economics
+        cac = latest.get('cac', 0)
+        ltv = latest.get('ltv', 0)
+        ltv_cac = (ltv / cac) if cac > 0 else 0
+        
+        # Burn & Runway
+        revenue = latest.get('revenue', 0)
+        total_cost = latest.get('total_cost', 0)
+        cash_reserves = latest.get('cash_reserve', 0)
+        
+        monthly_burn = max(0, total_cost - revenue)
+        monthly_surplus = max(0, revenue - total_cost)
+        runway = (cash_reserves / monthly_burn) if monthly_burn > 0 else 99 # 99 = infinity/safe
+        
+        # We'll hijack the 'by_industry' key to send these metrics as a specialized list 
+        # to minimize breakage in main.py, but app.js will be updated to render them differently.
+        metrics = [
+            {"label": "LTV / CAC Ratio", "value": round(ltv_cac, 2), "status": "Good" if ltv_cac >= 3 else "Needs Work"},
+            {"label": "Cash Runway", "value": f"{round(runway, 1)} Months", "status": "Secure" if runway > 12 else "Urgent"},
+        ]
+        
+        # Dynamic label for Monthly Burn vs Surplus
+        if monthly_surplus > 0:
+            metrics.insert(1, {"label": "Monthly Surplus", "value": f"₹{round(monthly_surplus, 2)}", "status": "Profitable"})
+        else:
+            metrics.insert(1, {"label": "Monthly Burn", "value": f"₹{round(monthly_burn, 2)}", "status": "High" if monthly_burn > revenue * 0.5 else "Low"})
 
         return {
-            "by_industry":           industry_list,
-            "by_stage":              stage_list,
-            "risk_distribution":     risk_dist,
-            "highest_cost_industry": top_cost_row['industry'],
-            "best_margin_industry":  best_margin_row['industry'],
+            "unit_economics": {
+                "ltv_cac_ratio": round(ltv_cac, 2),
+                "monthly_burn": round(monthly_burn, 2),
+                "monthly_surplus": round(monthly_surplus, 2),
+                "runway_months": round(runway, 1),
+                "efficiency_score": round(min(100, ltv_cac * 20), 1) # simple score based on LTV/CAC
+            },
+            "metrics": metrics,
+            "highest_cost_industry": latest.get('industry', 'N/A'),
+            "best_margin_industry": latest.get('industry', 'N/A'),
+            "by_industry": [] # Clear old industry grouping to avoid confusion
         }
 
     def detect_anomalies(self, df: pd.DataFrame) -> list:
         anomalies = []
 
-        # Companies with negative profit margin worse than -50%
-        bad_margin = df[df['profit_margin'] < -0.5]
-        if len(bad_margin) > 0:
+        # Only check if we have data
+        if len(df) == 0:
+            return anomalies
+
+        # Check for latest record or aggregated state
+        latest = df.iloc[-1]
+
+        # Profit margin worse than -50%
+        if latest['profit_margin'] < -0.5:
             anomalies.append({
                 "type":        "Critical Loss",
-                "description": f"{len(bad_margin)} companies ({len(bad_margin)/len(df)*100:.1f}%) have profit margin worse than -50%.",
+                "description": "The organization's profit margin is currently worse than -50%, indicating a critical financial state.",
                 "severity":    "high"
             })
 
-        # Companies with runway < 3 months
-        low_runway = df[df['runway_months'] < 3]
-        if len(low_runway) > 0:
+        # Runway < 3 months
+        if latest.get('runway_months', 99) < 3:
             anomalies.append({
                 "type":        "Cash Crisis Risk",
-                "description": f"{len(low_runway)} companies have less than 3 months of runway remaining.",
+                "description": "Current cash reserves suggest less than 3 months of runway remaining.",
                 "severity":    "high"
             })
 
         # High debt ratio >0.8
-        high_debt = df[df['debt_ratio'] > 0.8]
-        if len(high_debt) > 0:
+        if latest.get('debt_ratio', 0) > 0.8:
             anomalies.append({
                 "type":        "Debt Overload",
-                "description": f"{len(high_debt)} companies carry a debt ratio above 80%.",
+                "description": "The organization carries a debt ratio above 80%, which may impact liquidity.",
                 "severity":    "medium"
             })
 
         # Negative growth rate
-        neg_growth = df[df['growth_rate'] < 0]
-        if len(neg_growth) > 0:
+        if latest['growth_rate'] < 0:
             anomalies.append({
                 "type":        "Declining Revenue",
-                "description": f"{len(neg_growth)} companies are reporting negative growth rates.",
+                "description": "Growth rate is currently negative, suggesting a contraction in revenue.",
                 "severity":    "medium"
             })
 

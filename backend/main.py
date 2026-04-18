@@ -5,6 +5,7 @@ from typing import Optional
 import engine
 import ml_model
 import auth
+import json
 from chat_api import chat_engine
 
 from ml.data_loading import DataLoader
@@ -58,6 +59,9 @@ def get_org_analysis(org_name: str):
     predictions = pipeline.predict_from_industry(enriched_df)
     analysis["predictions"] = predictions
     
+    # Sync overview health score with calculated prediction
+    analysis["overview"]["avg_health_score"] = round(predictions["predicted_health_score"], 1)
+
     insight_gen = InsightGenerator()
     analysis["advisory"] = insight_gen.generate_advisory(enriched_df, analysis["overview"], predictions)
     analysis["summary"] = insight_gen.generate_summary_text(analysis["overview"], predictions)
@@ -125,6 +129,7 @@ class AnalyzeRequest(BaseModel):
     
 class ChatReq(BaseModel):
     message: str
+    context: Optional[dict] = None
 
 class SecurityUpdateReq(BaseModel):
     current_password: str
@@ -193,6 +198,11 @@ class OrgManualInput(BaseModel):
     fixed_cost: Optional[float] = 0
     variable_cost: Optional[float] = 0
     growth_rate: Optional[float] = 0
+    cash_reserve: Optional[float] = 0
+    debt: Optional[float] = 0
+    customer_count: Optional[int] = 0
+    cac: Optional[float] = 0
+    ltv: Optional[float] = 0
     health_score: Optional[float] = 0
     date: Optional[str] = None
 
@@ -229,6 +239,20 @@ def get_org_dashboard(Authorization: Optional[str] = Header(None)):
         print(traceback.format_exc())
         raise HTTPException(status_code=500, detail=f"Analysis error: {str(e)}")
 
+@app.get("/api/org/get_latest_data")
+def get_latest_org_data(Authorization: Optional[str] = Header(None)):
+    token = (Authorization or "").replace("Bearer ", "")
+    user = auth.get_user_from_token(token)
+    if not user or user.get("type") != "organization":
+         raise HTTPException(status_code=401, detail="Unauthorized")
+
+    rows = auth.get_org_data_rows_from_db(user["org_name"])
+    if not rows:
+        return {"success": True, "data": None}
+    
+    # Return the latest record (last one added)
+    return {"success": True, "data": rows[-1]}
+
 @app.get("/api/org/predictions")
 def get_org_predictions(Authorization: Optional[str] = Header(None), industry: Optional[str] = None):
     # Same auth logic
@@ -247,34 +271,6 @@ def get_org_predictions(Authorization: Optional[str] = Header(None), industry: O
         preds = analysis["predictions"]
     return {"success": True, "data": preds}
 
-@app.post("/api/org/upload_csv")
-async def upload_org_csv(file: UploadFile = File(...), Authorization: Optional[str] = Header(None)):
-    token = (Authorization or "").replace("Bearer ", "")
-    user = auth.get_user_from_token(token)
-    if not user or user.get("type") != "organization":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Only CSV files allowed")
-
-    try:
-        # Read content and parse
-        content = await file.read()
-        import io
-        df = pd.read_csv(io.BytesIO(content))
-        
-        # Basic validation
-        required = ['revenue', 'total_cost']
-        found = [c for c in required if c in df.columns]
-        if not found:
-            raise HTTPException(status_code=400, detail="CSV must contain financial columns (revenue, total_cost, etc.)")
-        
-        rows = df.to_dict(orient='records')
-        auth.add_org_data_rows(user["org_name"], rows)
-        
-        return {"success": True, "message": f"Successfully uploaded {len(rows)} data points"}
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"CSV Error: {str(e)}")
 
 @app.post("/api/org/input_manual")
 def input_manual_data(req: OrgManualInput, Authorization: Optional[str] = Header(None)):
@@ -286,12 +282,17 @@ def input_manual_data(req: OrgManualInput, Authorization: Optional[str] = Header
     row = req.dict()
     if row.get('profit') is None:
         row['profit'] = row['revenue'] - row['total_cost']
-        
-    existing = auth.get_org_data_rows_from_db(user["org_name"])
-    existing.append(row)
-    auth.add_org_data_rows(user["org_name"], existing)
     
-    return {"success": True, "message": "Data point added successfully"}
+    # Ensure profit_margin is calculated for the DB
+    if row['revenue'] != 0:
+        row['profit_margin'] = (row['profit'] / row['revenue'])
+    else:
+        row['profit_margin'] = 0
+        
+    # Strictly overwrite previous state: send ONLY this row to the DB
+    auth.add_org_data_rows(user["org_name"], [row])
+    
+    return {"success": True, "message": "Manual data updated successfully"}
 
 # ---- API ROUTES ----
 @app.post("/api/analyze")
@@ -402,5 +403,11 @@ def chat_with_ai(req: ChatReq, Authorization: Optional[str] = Header(None)):
     if not user:
         raise HTTPException(status_code=401, detail="Invalid Session")
         
-    reply = chat_engine.respond(user["email"], req.message)
+    # If context is provided (Org or Individual analysis results), use contextual response
+    if req.context:
+        print(f"DEBUG - Received Chat Context: {json.dumps(req.context, indent=2)}")
+        reply = chat_engine.respond_with_context(req.message, req.context)
+    else:
+        reply = chat_engine.respond(user["email"], req.message)
+        
     return {"status": "success", "reply": reply}

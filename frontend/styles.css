@@ -6,6 +6,7 @@
     --primary: #1e3a8a;
     --primary-hover: #1e40af;
     --accent: #10b981;
+    --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
     --glass-bg: rgba(255, 255, 255, 0.85);
@@ -424,18 +425,16 @@ body {
 }
 
 /* ── Auth page animated background ──
-   #app-main-wrapper wraps the entire login/auth area.
    We layer animated blobs behind everything using pseudo-elements
    and extra DOM-free nodes — card layout is untouched.             */
-#app-main-wrapper {
+body.auth-active #app-main-wrapper {
     position: relative;
     min-height: 100vh;
     background: linear-gradient(145deg, #eef2ff 0%, #f0f9ff 50%, #ecfdf5 100%);
-    overflow: hidden;
 }
 
 /* Grid overlay */
-#app-main-wrapper::before {
+body.auth-active #app-main-wrapper::before {
     content: '';
     position: fixed;
     inset: 0;
@@ -448,7 +447,7 @@ body {
 }
 
 /* Large slow-moving radial glow */
-#app-main-wrapper::after {
+body.auth-active #app-main-wrapper::after {
     content: '';
     position: fixed;
     width: 800px;
@@ -467,8 +466,14 @@ body {
     100% { transform: translate(-60px, 80px) scale(1.1); }
 }
 
+/* Hide blobs if not on auth page */
+.auth-blob-1, .auth-blob-2, .auth-blob-3 {
+    display: none;
+}
+
 /* Floating blob 1 — blue, bottom-left */
-.auth-blob-1 {
+body.auth-active .auth-blob-1 {
+    display: block;
     position: fixed;
     width: 480px;
     height: 480px;
@@ -486,7 +491,8 @@ body {
 }
 
 /* Floating blob 2 — teal, top-center */
-.auth-blob-2 {
+body.auth-active .auth-blob-2 {
+    display: block;
     position: fixed;
     width: 360px;
     height: 360px;
@@ -505,7 +511,8 @@ body {
 }
 
 /* Floating blob 3 — purple tint, mid-right */
-.auth-blob-3 {
+body.auth-active .auth-blob-3 {
+    display: block;
     position: fixed;
     width: 300px;
     height: 300px;
@@ -523,10 +530,10 @@ body {
 }
 
 /* Ensure auth card and header sit above background layers */
-#app-main-wrapper .top-nav,
-#app-main-wrapper #auth-section,
-#app-main-wrapper header,
-#app-main-wrapper .top-nav ~ * {
+body.auth-active #app-main-wrapper .top-nav,
+body.auth-active #app-main-wrapper #auth-section,
+body.auth-active #app-main-wrapper header,
+body.auth-active #app-main-wrapper .top-nav ~ * {
     position: relative;
     z-index: 1;
 }
@@ -3534,4 +3541,78 @@ select.readonly-input[disabled]:focus {
 @media (max-width: 640px) {
     .hp-about-grid { grid-template-columns: 1fr; }
     .hp-about-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Financial Dashboard Utilities - Professional Refinement */
+.color-success { color: var(--success) !important; }
+.color-danger { color: var(--danger) !important; }
+.color-warning { color: var(--warning) !important; }
+
+.risk-low { 
+    color: var(--success) !important; 
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.1); 
+}
+.risk-high { 
+    color: var(--danger) !important; 
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.1); 
+}
+.risk-moderate { 
+    color: #ffcc00 !important; 
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.1); 
+    font-weight: 800;
+}
+
+/* Anomaly List Refinement */
+.anomaly-item strong {
+    color: var(--text-main);
+    letter-spacing: -0.01em;
+}
+
+.anomaly-item:hover {
+    background: rgba(255,255,255,0.05) !important;
+    transform: translateX(4px);
+    transition: all 0.2s ease;
+}
+
+/* AI Chat Styles (Unified) */
+.chat-window {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.chat-msg {
+    max-width: 80%;
+    padding: 0.85rem 1.1rem;
+    border-radius: 16px;
+    font-size: 0.92rem;
+    line-height: 1.5;
+    position: relative;
+    animation: fadeInChat 0.3s ease-out;
+}
+
+.user-msg {
+    align-self: flex-end;
+    background: var(--primary);
+    color: white;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.15);
+}
+
+.ai-msg {
+    align-self: flex-start;
+    background: var(--bg-white);
+    color: var(--text-main);
+    border: 1px solid var(--glass-border);
+    border-bottom-left-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.ai-msg strong {
+    color: var(--primary);
+}
+
+@keyframes fadeInChat {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }

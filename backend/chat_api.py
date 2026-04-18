@@ -1,4 +1,5 @@
 import os
+import json
 from dotenv import load_dotenv
 from google import genai
 
@@ -6,7 +7,7 @@ from google import genai
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 _GEMINI_KEY = os.getenv("GEMINI_API_KEY", "")
-_GEMINI_MODEL = "gemini-2.0-flash"   # Correct model available on this API key
+_GEMINI_MODEL = "gemini-1.5-flash"
 
 # Configure Gemini only if we have a valid key
 _gemini_available = False
@@ -114,6 +115,62 @@ class ChatCoach:
         if email not in self.memory:
             self.memory[email] = {"history": []}
         self.memory[email]["financials"] = financials
+
+    def respond_with_context(self, user_message: str, context: dict) -> str:
+        """New specialized method for Organizations and Individuals passing explicit dashboard context."""
+        if not context:
+            return "No financial data available. Please input data first."
+            
+        try:
+            # Serialise the context for the LLM
+            context_str = json.dumps(context, indent=2)
+
+            system_prompt = (
+                "You are an expert AI Financial Coach. Your goal is to provide proactive, encouraging, and highly specific financial guidance.\n\n"
+                "Here is the user's full financial analysis data (in JSON format):\n"
+                f"{context_str}\n\n"
+                "Rules for Response:\n"
+                "1. ALWAYS provide a helpful and professional response. Never say 'Not enough data'.\n"
+                "2. Ground your advice in the provided JSON data. Use specific numbers (like income, savings rate, or profit margins) to personalize your answer.\n"
+                "3. If the user asks a general question, answer it as an expert but relate it back to their specific financial situation shown in the data.\n"
+                "4. Be motivational and actionable. Suggest next steps based on their goals and current gaps.\n\n"
+                f"User question: {user_message}\n\n"
+                "Coach Response:"
+            )
+
+            if _gemini_available and _client:
+                # Use a combined prompt for strict data binding
+                response = _client.models.generate_content(
+                    model=_GEMINI_MODEL,
+                    contents=system_prompt,
+                )
+                return response.text.strip()
+            else:
+                return "⚠️ AI service is currently in fallback mode. I can only answer based on current data. Please try again later."
+        except Exception as e:
+            print(f"[ChatAPI] Contextual chat failed: {e}")
+            
+            # Smart Offline Mocking when API key is missing/invalid
+            if "overview" in context:
+                rev = context['overview'].get('total_revenue', 0)
+                prof = context['overview'].get('total_profit', 0)
+                msg_lower = user_message.lower()
+                
+                if "profit" in msg_lower or "margin" in msg_lower:
+                    return f"💡 **AI Coach (Fallback Mode):** To improve your profit margin from your current ₹{prof:,.0f}, I recommend auditing your highest variable expenses and looking into upselling existing clients. Since your revenue is ₹{rev:,.0f}, even a 3-5% efficiency gain will compound significantly!"
+                elif "grow" in msg_lower or "scale" in msg_lower or "revenue" in msg_lower or "grow the company" in msg_lower:
+                    return f"💡 **AI Coach (Fallback Mode):** Scaling your current revenue of ₹{rev:,.0f} requires increasing your LTV (Life Time Value) while keeping CAC (Customer Acquisition Cost) low. Focus on customer retention and optimizing your sales channels."
+                elif "save" in msg_lower or "expense" in msg_lower:
+                    return f"💡 **AI Coach (Fallback Mode):** Look closely at your fixed overhead. With your profit sitting at ₹{prof:,.0f}, renegotiating vendor contracts or cutting unused software licenses can provide immediate cash flow relief."
+                else:
+                    return f"💡 **AI Coach (Fallback Mode):** Monitoring your unit economics is key. You are currently generating ₹{rev:,.0f} in revenue with a profit of ₹{prof:,.0f}. Focus on maintaining operational efficiency for steady growth."
+            elif "financials" in context:
+                inc = context['financials'].get('income', 0)
+                sav = context['financials'].get('savings', 0)
+                return f"**(Offline Mode Active)** Based on your data, your income is ₹{inc:,.0f} and you are saving ₹{sav:,.0f}. To see full AI insights, please configure a valid Gemini API key in the backend `.env` file."
+            else:
+                return "⚠️ (Offline Mode) Context received safely, but the backend AI API key is invalid or expired. Please update it."
+
 
     def respond(self, email: str, user_message: str) -> str:
         context  = self.memory.get(email, {})

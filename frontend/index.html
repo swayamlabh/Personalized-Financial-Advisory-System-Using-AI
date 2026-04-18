@@ -6,8 +6,9 @@
     <title>FinAI Advisor — Personalized Financial Intelligence</title>
     <meta name="description" content="AI-powered personalized financial advisory platform. Get real-time insights, expense tracking, and intelligent recommendations for your financial goals.">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=1.1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js?v=1.1" defer></script>
 </head>
 <body>
     <nav class="landing-navbar hidden" id="landing-navbar">
@@ -77,6 +78,11 @@
                         <span class="nav-icon">📈</span>
                         <span class="nav-text">Investments</span>
                         <span class="nav-tooltip">Investments</span>
+                    </li>
+                    <li class="nav-item" data-target="sec-chat">
+                        <span class="nav-icon">💬</span>
+                        <span class="nav-text">AI Chat</span>
+                        <span class="nav-tooltip">AI Chat</span>
                     </li>
                 </ul>
             </nav>
@@ -510,8 +516,17 @@
 
                 <hr class="divider">
 
-                <!-- Categorized Expenses -->
+                <!-- Monthly Expenses Choice -->
                 <div class="form-section-label">🧾 Monthly Expenses <span class="total-live" id="exp-total-live">Total: ₹0</span></div>
+                <div class="form-grid" style="margin-bottom: 1.5rem;">
+                    <div class="input-group">
+                        <label for="exp-collective">Collective Monthly Expense (Total)</label>
+                        <input type="number" id="exp-collective" placeholder="Total amount in ₹" min="0">
+                        <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">Enter a total here, or use the breakdown categories below.</small>
+                    </div>
+                </div>
+
+                <div class="form-section-label" style="font-size: 0.9rem; opacity: 0.8; margin-top: 0;">OR Breakdown by Category:</div>
                 <div class="form-grid">
                     <div class="input-group">
                         <label for="exp-rent">🏠 House Rent</label>
@@ -592,32 +607,16 @@
                 <p style="color: var(--text-muted);">Please provide your financial data to generate personalized AI insights and predictions.</p>
             </div>
 
-            <div class="dashboard-grid">
-                <!-- Option A: Upload CSV -->
-                <div class="glass-panel dash-card fade-in">
-                    <div style="text-align: center; padding: 2rem;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-                        <h3>Option A: Upload CSV</h3>
-                        <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">
-                            Upload your historical financial data. <br>
-                            Required columns: <strong>revenue, total_cost</strong> (or profit). <br>
-                            Recommended: <strong>date, industry, growth_rate, cac, ltv</strong>.
-                        </p>
-                        <input type="file" id="org-csv-upload" accept=".csv" style="display: none;">
-                        <button class="btn-primary" onclick="document.getElementById('org-csv-upload').click()">Choose CSV File</button>
-                        <p id="org-upload-status" style="margin-top: 1rem; font-size: 0.85rem;"></p>
-                    </div>
-                </div>
-
-                <!-- Option B: Manual Input -->
-                <div class="glass-panel dash-card fade-in">
+            <div class="dashboard-grid" style="display: flex; justify-content: center;">
+                <!-- Manual Entry Section -->
+                <div class="glass-panel dash-card fade-in" style="max-width: 500px; width: 100%;">
                     <div style="text-align: center; padding: 2rem;">
                         <div style="font-size: 3rem; margin-bottom: 1rem;">✍️</div>
-                        <h3>Option B: Manual Entry</h3>
+                        <h3>Enter Organization Financial Data</h3>
                         <p style="color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem;">
-                            Enter your financial metrics manually if you don't have a CSV file ready.
+                            Provide your financial metrics to generate personalized AI insights and predictions.
                         </p>
-                        <button class="btn-secondary" id="btn-show-manual">Open Manual Form</button>
+                        <button class="btn-primary" id="btn-show-manual">Start Data Entry</button>
                     </div>
                 </div>
             </div>
@@ -714,6 +713,7 @@
                 <button class="org-sub-tab" data-tab="org-tab-predictions">Predictions</button>
                 <button class="org-sub-tab" data-tab="org-tab-advisory">Advisory</button>
                 <button class="org-sub-tab" data-tab="org-tab-summary">Summary</button>
+                <button class="org-sub-tab" data-tab="org-tab-chat">AI Chat</button>
             </div>
 
             <div id="org-tabs-container">
@@ -725,15 +725,15 @@
                             <div class="stat-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
                                 <div class="stat-box">
                                     <span>Total Revenue</span>
-                                    <span id="org-total-rev" class="stat-value color-success">$0</span>
+                                    <span id="org-total-rev" class="stat-value">₹0</span>
                                 </div>
                                 <div class="stat-box">
                                     <span>Total Expenses</span>
-                                    <span id="org-total-exp" class="stat-value color-danger">$0</span>
+                                    <span id="org-total-exp" class="stat-value">₹0</span>
                                 </div>
                                 <div class="stat-box">
                                     <span>Net Profit</span>
-                                    <span id="org-profit" class="stat-value">$0</span>
+                                    <span id="org-profit" class="stat-value">₹0</span>
                                 </div>
                                 <div class="stat-box">
                                     <span>Profit Margin</span>
@@ -765,26 +765,18 @@
                 <!-- TAB 2: INSIGHTS -->
                 <div id="org-tab-insights" class="org-tab-content hidden">
                     <div class="dashboard-grid">
+                        <!-- Key Economics Section -->
                         <div class="glass-panel dash-card fade-in">
-                            <h3>Industry Category Breakdown</h3>
-                            <div id="org-industry-breakdown" class="chart-list">
+                            <h3>Organizational Economics</h3>
+                            <div id="org-unit-economics-grid" class="stat-list" style="margin-top: 1rem;">
                                 <!-- Loaded via JS -->
                             </div>
                         </div>
+
+                        <!-- Anomalies/Warnings -->
                         <div class="glass-panel dash-card fade-in">
-                            <h3>Spending Diagnostics</h3>
-                            <div class="stat-list">
-                                <div class="stat-row">
-                                    <span class="label">Highest Cost Industry</span>
-                                    <span id="org-highest-cost-ind" class="value fallback">Loading...</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="label">Best Margin Industry</span>
-                                    <span id="org-best-margin-ind" class="value fallback">Loading...</span>
-                                </div>
-                            </div>
-                            <h3 style="margin-top: 1.5rem;">Anomaly Detection</h3>
-                            <div id="org-anomaly-list" class="anomaly-list">
+                            <h3>Financial Health Warnings</h3>
+                            <div id="org-anomaly-list" class="anomaly-list" style="margin-top: 1rem;">
                                 <!-- Loaded via JS -->
                             </div>
                         </div>
@@ -849,6 +841,23 @@
                                 <span class="badge badge-ai">Generated by Finance ML</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- TAB 6: AI CHAT (NEW) -->
+                <div id="org-tab-chat" class="org-tab-content hidden">
+                    <div class="glass-panel dash-card fade-in" style="height: 600px; display: flex; flex-direction: column;">
+                        <h3>AI Financial Advisor Chat</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Ask questions about your organizational financials. All answers are strictly data-bound.</p>
+                        
+                        <div id="org-chat-window" class="chat-window" style="flex-grow: 1; overflow-y: auto; padding: 1rem; border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; gap: 0.75rem;">
+                            <!-- Messages -->
+                        </div>
+                        
+                        <form id="org-chat-form" class="chat-form" style="display: flex; gap: 0.75rem;">
+                            <input type="text" id="org-chat-input" placeholder="How can I improve my profit margin?" style="flex-grow: 1; padding: 0.75rem 1rem; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--bg-white);">
+                            <button type="submit" class="btn-primary" style="width: auto; padding: 0.75rem 1.5rem;">Send</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -1001,6 +1010,23 @@
                             </table>
                         </div>
                     </div>
+                </div>
+            </section>
+
+            <!-- AI CHAT TAB (INDIVIDUAL) -->
+            <section id="sec-chat" class="dashboard-tab hidden fade-in">
+                <div class="glass-panel dash-card fade-in" style="height: 600px; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto;">
+                    <h3>Personal AI Financial Coach</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Discuss your personal financials, goals, and savings strategies with our data-bound AI.</p>
+                    
+                    <div id="ind-chat-window" style="flex-grow: 1; overflow-y: auto; padding: 1rem; border: 1px solid var(--glass-border); border-radius: 12px; margin-bottom: 1rem; background: rgba(0,0,0,0.02);">
+                        <!-- Messages -->
+                    </div>
+                    
+                    <form id="ind-chat-form" style="display: flex; gap: 0.75rem;">
+                        <input type="text" id="ind-chat-input" placeholder="Will I reach my goal on time?" style="flex-grow: 1; padding: 0.75rem 1rem; border-radius: 10px; border: 1px solid var(--glass-border); background: var(--bg-white);">
+                        <button type="submit" class="btn-primary" style="width: auto; padding: 0.75rem 1.5rem;">Send</button>
+                    </form>
                 </div>
             </section>
         </div>

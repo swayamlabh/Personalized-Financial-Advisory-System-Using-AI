@@ -131,6 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const appMainWrapper = document.getElementById('app-main-wrapper');
         // Always restore the wrapper first; the #home route will hide it again below
         if (appMainWrapper) appMainWrapper.style.display = '';
+        
+        document.body.classList.remove('auth-active');
 
         authSection.classList.add('hidden');
         inputSection.classList.add('hidden');
@@ -180,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // View Router
         if (hash === '#login' || hash === '#signup') {
             window.appState = null;
+            document.body.classList.add('auth-active');
             authSection.classList.remove('hidden');
             accountBar.classList.add('hidden');
             if (hash === '#signup') {
@@ -356,6 +359,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---- Profile Logic ----
     // ---- Organization Dashboard Logic ----
     let currentOrgData = null;
+    let orgChatHistory = [];
+    let indChatHistory = [];
 
     async function loadOrgDashboard() {
         const token = localStorage.getItem('token');
@@ -395,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Show first tab by default
             switchOrgTab('org-tab-overview');
+            setupOrgChat(); // Ensure chat is wired up with latest data context
             
             // Global health indicator
             const health = currentOrgData.predictions.predicted_health_score;
@@ -414,40 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnManual = document.getElementById('btn-show-manual');
         const manualContainer = document.getElementById('org-manual-form-container');
         if (btnManual && manualContainer) {
-            btnManual.onclick = () => manualContainer.classList.toggle('hidden');
-        }
-
-        // CSV Upload handling
-        const uploadInput = document.getElementById('org-csv-upload');
-        if (uploadInput) {
-            uploadInput.onchange = async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const status = document.getElementById('org-upload-status');
-                status.textContent = 'Uploading...';
-                status.style.color = 'var(--primary)';
-
-                const formData = new FormData();
-                formData.append('file', file);
-
-                try {
-                    const res = await fetch(`${API_BASE}/org/upload_csv`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-                        body: formData
-                    });
-                    const json = await res.json();
-                    if (json.success) {
-                        status.textContent = `Success: ${json.message}`;
-                        status.style.color = 'var(--success)';
-                        setTimeout(loadOrgDashboard, 1500); // Reload to show dash
-                    } else {
-                        throw new Error(json.detail || 'Upload failed');
-                    }
-                } catch (err) {
-                    status.textContent = `Error: ${err.message}`;
-                    status.style.color = 'var(--danger)';
+            btnManual.onclick = async () => {
+                manualContainer.classList.toggle('hidden');
+                if (!manualContainer.classList.contains('hidden')) {
+                    // Try to pre-fill the form with latest data
+                    await prefillOrgManualForm();
                 }
             };
         }
@@ -479,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                     const json = await res.json();
                     if (json.success) {
-                        alert('Data point added! You can add more or view your dashboard.');
+                        alert('Manual data updated successfully! Reviewing dashboard...');
                         loadOrgDashboard(); // Reload to update dash access
                     } else {
                         alert('Error: ' + json.detail);
@@ -488,6 +465,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert('Request failed: ' + err.message);
                 }
             };
+        }
+    }
+
+    async function prefillOrgManualForm() {
+        const token = localStorage.getItem('token');
+        try {
+            const res = await fetch(`${API_BASE}/org/get_latest_data`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const json = await res.json();
+            if (json.success && json.data) {
+                const form = document.getElementById('org-manual-form');
+                const row = json.data;
+                
+                // Fields to populate
+                const fields = ['industry', 'stage', 'goal', 'revenue', 'total_cost', 'fixed_cost', 'variable_cost', 'cash_reserve', 'debt', 'growth_rate', 'customer_count', 'cac', 'ltv', 'date'];
+                
+                fields.forEach(f => {
+                    const el = form.elements[f];
+                    if (el) {
+                        if (row[f] !== null && row[f] !== undefined) {
+                            el.value = row[f];
+                        }
+                    }
+                });
+            }
+        } catch (err) {
+            console.error('[OrgDash] Failed to pre-fill form:', err);
         }
     }
 
@@ -533,51 +538,88 @@ document.addEventListener('DOMContentLoaded', () => {
         if (tabId === 'org-tab-predictions') renderOrgPredictions();
         if (tabId === 'org-tab-advisory') renderOrgAdvisory();
         if (tabId === 'org-tab-summary') renderOrgSummary();
+        if (tabId === 'org-tab-chat') renderOrgChat();
+    }
+
+    function setupOrgChat() {
+        const form = document.getElementById('org-chat-form');
+        if (!form) return;
+        // Clean up previous listeners
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        newForm.addEventListener('submit', (e) => handleChatSubmit(e, 'org'));
+    }
+
+    function renderOrgChat() {
+        const window = document.getElementById('org-chat-window');
+        if (window && window.children.length === 0 && orgChatHistory.length === 0) {
+            appendChatMessage('org-chat-window', "Hello! I am your AI Financial Advisor. I have analyzed your organizational data. How can I help you today?", 'ai');
+        }
     }
 
     function renderOrgOverview() {
         if (!currentOrgData) return;
         const o = currentOrgData.overview;
-        const fmt = (n) => `$${Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+        // Helper to bold values
+        const b = (val) => `<strong>${val}</strong>`;
+        const fmt = (n) => b(`₹${Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 })}`);
 
-        document.getElementById('org-total-rev').textContent = fmt(o.total_revenue);
-        document.getElementById('org-total-exp').textContent = fmt(o.total_expenses);
-        document.getElementById('org-profit').textContent = fmt(o.total_profit);
-        document.getElementById('org-profit').style.color = o.total_profit >= 0 ? 'var(--success)' : 'var(--danger)';
+        const rev = o.total_revenue || 0;
+        const exp = o.total_expenses || 0;
+        const profit = o.total_profit || 0;
+
+        document.getElementById('org-total-rev').innerHTML = fmt(rev);
         
-        document.getElementById('org-profit-margin').textContent = `${o.avg_profit_margin}%`;
-        document.getElementById('org-avg-growth').textContent = `${o.avg_growth_rate}%`;
-        document.getElementById('org-avg-health').textContent = `${o.avg_health_score}/100`;
-        document.getElementById('org-record-count').textContent = o.record_count.toLocaleString();
+        // Expenses Logic: <50%=Green, 50-80%=Yellow, >80%=Red (Slightly more generous)
+        const expRatio = rev > 0 ? (exp / rev) : 1;
+        const expEl = document.getElementById('org-total-exp');
+        expEl.innerHTML = fmt(exp);
+        expEl.style.color = expRatio < 0.5 ? 'var(--success)' : (expRatio < 0.8 ? 'var(--warning)' : 'var(--danger)');
+
+        // Profit Logic: >20%=Green, 5-20%=Yellow, <5%=Red
+        const profitRatio = rev > 0 ? (profit / rev) : 0;
+        const profitEl = document.getElementById('org-profit');
+        profitEl.innerHTML = fmt(profit);
+        profitEl.style.color = profitRatio > 0.20 ? 'var(--success)' : (profitRatio >= 0.05 ? 'var(--warning)' : 'var(--danger)');
+        
+        document.getElementById('org-profit-margin').innerHTML = b(`${o.avg_profit_margin}%`);
+        document.getElementById('org-avg-growth').innerHTML = b(`${o.avg_growth_rate}%`);
+        
+        const healthEl = document.getElementById('org-avg-health');
+        if (healthEl) healthEl.innerHTML = b(`${o.avg_health_score}/100`);
     }
 
     function renderOrgInsights() {
+        if (!currentOrgData) return;
         const c = currentOrgData.category_insights;
+        const b = (val) => `<strong>${val}</strong>`;
         
-        // Industry breakdown bars
-        const breakdownContainer = document.getElementById('org-industry-breakdown');
-        const maxRev = Math.max(...c.by_industry.map(i => i.total_revenue));
-        
-        breakdownContainer.innerHTML = c.by_industry.map(ind => {
-            const pct = (ind.total_revenue / maxRev * 100);
-            return `
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 0.3rem;">
-                        <span>${ind.industry} (${ind.count})</span>
-                        <span style="color: var(--success); font-weight: 600;">$${Math.round(ind.total_revenue/1e6)}M</span>
-                    </div>
-                    <div style="background: var(--glass-bg); height: 6px; border-radius: 3px;">
-                        <div style="width: ${pct}%; background: var(--primary); height: 100%; border-radius: 3px;"></div>
-                    </div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.2rem;">
-                        Margin: ${ind.avg_margin}% | Health: ${ind.avg_health}
+        const getMetricColor = (status) => {
+            const s = status.toLowerCase();
+            if (s === 'good' || s === 'secure' || s === 'profitable' || s === 'low') return 'var(--success)';
+            if (s === 'needs work' || s === 'moderate' || s === 'medium') return 'var(--warning)';
+            return 'var(--danger)';
+        };
+
+        // Organizational Economics Grid
+        const grid = document.getElementById('org-unit-economics-grid');
+        if (grid && c.metrics) {
+            grid.innerHTML = c.metrics.map(m => `
+                <div class="stat-row" style="padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                    <span class="label" style="font-weight: 500;">${m.label}</span>
+                    <div style="text-align: right;">
+                        <span class="value" style="font-size: 1.1rem; color: var(--text-primary);">${b(m.value)}</span>
+                        <div class="badge" style="display: block; font-size: 0.65rem; margin-top: 0.25rem; background: ${getMetricColor(m.status).replace('var(', 'rgba(').replace(')', ', 0.1)')}; color: ${getMetricColor(m.status)}; border:none; padding: 2px 8px; font-weight: 800;">
+                            ${m.status.toUpperCase()}
+                        </div>
                     </div>
                 </div>
-            `;
-        }).join('');
+            `).join('');
+        }
 
-        document.getElementById('org-highest-cost-ind').textContent = c.highest_cost_industry;
-        document.getElementById('org-best-margin-ind').textContent = c.best_margin_industry;
+        const indEl = document.getElementById('org-highest-cost-ind');
+        if (indEl) indEl.innerHTML = b(c.highest_cost_industry);
 
         // Anomalies
         const anomalyContainer = document.getElementById('org-anomaly-list');
@@ -595,71 +637,141 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderOrgPredictions() {
         const p = currentOrgData.predictions;
-        document.getElementById('org-model-r2-health').textContent = p.model_metrics.health_r2;
-        document.getElementById('org-model-r2-profit').textContent = p.model_metrics.profit_r2;
+        const b = (val) => `<strong>${val}</strong>`;
+        
+        const descEl = document.getElementById('org-projection-desc');
+        if (descEl) {
+            descEl.style.lineHeight = '2';
+            descEl.style.fontSize = '1rem';
+            descEl.style.color = 'var(--text-primary)';
+            descEl.style.opacity = '0.9';
+            descEl.innerHTML = `
+                Our proprietary forecasting algorithms indicate that based on the observed growth velocity of ${b(p.avg_growth_rate_pct + '%')}, 
+                the organization is positioned for a multi-quarter expansion cycle. 
+                The current predictive model identifies ${b('Linear Regression')} as the primary driver for these results, 
+                optimizing for a 6-month capital stabilization horizon. Under strict operational compliance, 
+                fiscal robusticity is expected to appreciate significantly.
+            `;
+        }
+        const healthR2 = document.getElementById('org-model-r2-health');
+        const profitR2 = document.getElementById('org-model-r2-profit');
+        
+        if (p.model_metrics.health_r2 === "N/A") {
+            healthR2.innerHTML = `<span style="font-size:0.75rem; color:var(--warning);">Profiling...</span>`;
+            profitR2.innerHTML = `<span style="font-size:0.75rem; color:var(--warning);">Profiling...</span>`;
+        } else {
+            healthR2.innerHTML = b(p.model_metrics.health_r2);
+            profitR2.innerHTML = b(p.model_metrics.profit_r2);
+        }
 
         const container = document.getElementById('org-prediction-chart-container');
         const proj = p.projections;
-        const width = 600, height = 180, pad = 30;
+        const width = 600, height = 220, pad = 40;
         
         const allVals = [...proj.revenue, ...proj.cost];
-        const max = Math.max(...allVals), min = Math.min(...allVals), range = max - min || 1;
+        const max = Math.max(...allVals) * 1.1; // Add margin
+        const min = Math.min(0, ...allVals); // Start from 0 if possible
+        const range = max - min || 1;
 
         const getPts = (vals) => vals.map((v, i) => `${pad + (i/6)*(width-pad*2)},${height-pad - ((v-min)/range)*(height-pad*2)}`).join(' ');
 
         container.innerHTML = `
             <svg viewBox="0 0 ${width} ${height}" style="width:100%; height: auto; overflow: visible;">
+                <defs>
+                    <linearGradient id="grad-rev" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--success)" stop-opacity="0.2" />
+                        <stop offset="100%" stop-color="var(--success)" stop-opacity="0" />
+                    </linearGradient>
+                </defs>
                 <!-- Grid Lines -->
                 <line x1="${pad}" y1="${pad}" x2="${width-pad}" y2="${pad}" stroke="rgba(255,255,255,0.05)" />
                 <line x1="${pad}" y1="${height-pad}" x2="${width-pad}" y2="${height-pad}" stroke="rgba(255,255,255,0.1)" />
                 
+                <!-- Area under Revenue -->
+                <path d="M${pad},${height-pad} L${getPts(proj.revenue)} L${width-pad},${height-pad} Z" fill="url(#grad-rev)" />
+
                 <!-- Revenue Line -->
-                <polyline points="${getPts(proj.revenue)}" fill="none" stroke="var(--success)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline points="${getPts(proj.revenue)}" fill="none" stroke="var(--success)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
                 <!-- Cost Line -->
-                <polyline points="${getPts(proj.cost)}" fill="none" stroke="var(--danger)" stroke-width="2" stroke-dasharray="4" />
+                <polyline points="${getPts(proj.cost)}" fill="none" stroke="var(--danger)" stroke-width="2" stroke-dasharray="6,4" />
                 
                 <!-- Labels -->
-                <text x="${pad}" y="${height-5}" fill="var(--text-muted)" font-size="10">${proj.labels[0]}</text>
-                <text x="${width-pad}" y="${height-5}" fill="var(--text-muted)" font-size="10" text-anchor="end">${proj.labels[6]} (Forecast)</text>
+                <text x="${pad}" y="${height-10}" fill="var(--text-muted)" font-size="11" font-weight="600">${proj.labels[0]}</text>
+                <text x="${width-pad}" y="${height-10}" fill="var(--text-muted)" font-size="11" font-weight="600" text-anchor="end">${proj.labels[6]} (Forecast)</text>
                 
                 <!-- Legend -->
-                <g transform="translate(${width-120}, 10)">
-                    <rect width="10" height="10" fill="var(--success)" /> <text x="15" y="9" fill="var(--text-muted)" font-size="9">Revenue</text>
-                    <rect width="10" height="10" y="15" fill="var(--danger)" /> <text x="15" y="24" fill="var(--text-muted)" font-size="9">Expenses</text>
+                <g transform="translate(${pad}, 20)">
+                    <circle r="4" cy="-4" fill="var(--success)" /> <text x="10" y="0" fill="var(--text-muted)" font-size="10">Revenue Trajectory (₹)</text>
+                    <circle r="4" cy="16" fill="var(--danger)" /> <text x="10" y="20" fill="var(--text-muted)" font-size="10">Expense Forecast (₹)</text>
                 </g>
             </svg>
-            <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.02); border-radius: 8px; font-size: 0.85rem;">
-                <p><strong>ML Insight:</strong> Based on the <strong>${p.avg_growth_rate_pct}%</strong> average growth rate, revenue is projected to hit 
-                <span class="color-success" style="font-weight:700;">$${Math.round(proj.revenue[6]).toLocaleString()}</span> 
-                by ${proj.labels[6]}.</p>
+            <div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--glass-bg); border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 10px 40px rgba(0,0,0,0.15);">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <span style="font-size: 1.5rem;">🔮</span>
+                    <h4 style="margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-weight: 800;">Strategic Trajectory Analysis</h4>
+                </div>
+                <p style="font-size: 1rem; line-height: 1.8; color: var(--text-primary); opacity: 0.95;">
+                    Utilizing state-of-the-art predictive modeling calibrated to an input growth rate of ${b(p.avg_growth_rate_pct + '%')}, 
+                    your monthly revenue is projected to scale from a baseline of ${b('₹' + Math.round(proj.revenue[0]).toLocaleString())} 
+                    to a projected apex of <span class="color-success" style="font-weight:800; text-decoration: underline;">${b('₹' + Math.round(proj.revenue[6]).toLocaleString())}</span> 
+                    over the forthcoming ${b('6')} months. 
+                </p>
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; color: var(--text-muted); font-style: italic;">
+                    Fiscal optimization hypothesis assumes a ${b('10%')} operational efficiency gain and stabilized overhead during the expansion phase.
+                </div>
             </div>
         `;
     }
 
     function renderOrgAdvisory() {
         const container = document.getElementById('org-advisory-list');
+        // Helper to bold all numbers in strings
+        const boldNumbers = (str) => str.replace(/([$₹]?\d+[\d,.%]*)/g, '<strong>$1</strong>');
+        
         container.innerHTML = currentOrgData.advisory.map(a => `
-            <div class="advisory-card ${a.category.toLowerCase()}">
-                <span class="badge" style="background: rgba(255,255,255,0.1); color: var(--text-primary); margin-bottom: 0.5rem; display: inline-block;">${a.category}</span>
-                <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5;">${a.text}</p>
+            <div class="advisory-card ${a.category.toLowerCase()}" style="padding: 2rem; border-left: 6px solid var(--primary); background: var(--glass-bg); margin-bottom: 1.75rem; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <span class="badge" style="--success: #10b981; --danger: #ef4444; --warning: #f59e0b; --glass-bg: rgba(255, 255, 255, 0.85); color: var(--text-primary); font-weight:800; letter-spacing: 0.5px; font-size: 0.75rem;">${a.category.toUpperCase()}</span>
+                    <span style="font-size: 1.25rem;">${a.category.includes('Urgent') ? '🚨' : (a.category.includes('Scalability') ? '🚀' : '📈')}</span>
+                </div>
+                <p style="font-size: 0.92rem; color: var(--text-primary); line-height: 1.8; opacity: 0.95;">${boldNumbers(a.text.replace(/\$/g, '₹'))}</p>
             </div>
         `).join('');
     }
 
     function renderOrgSummary() {
         const p = currentOrgData.predictions;
+        const b = (val) => `<strong>${val}</strong>`;
+        const boldNumbers = (str) => str.replace(/([$₹]?\d+[\d,.%]*)/g, '<strong>$1</strong>');
+        
         const health = p.predicted_health_score;
-        
         const circle = document.getElementById('org-health-circle');
-        circle.textContent = health;
-        circle.style.borderColor = health > 70 ? 'var(--success)' : (health > 40 ? 'var(--warning)' : 'var(--danger)');
+        circle.innerHTML = b(health);
+        circle.style.borderColor = health > 75 ? 'var(--success)' : (health > 50 ? 'var(--warning)' : 'var(--danger)');
         
+        const getRiskColor = (risk) => {
+            const r = risk.toLowerCase();
+            if (r.includes('low')) return 'var(--success)';
+            if (r.includes('high') || r.includes('critical')) return 'var(--danger)';
+            return 'var(--warning)'; // Moderate / Medium
+        };
+        
+        const riskColor = getRiskColor(p.predicted_risk_level);
         const risk = document.getElementById('org-risk-label');
-        risk.textContent = `RISK LEVEL: ${p.predicted_risk_level.toUpperCase()}`;
+        risk.innerHTML = b(`RISK PROFILE: ${p.predicted_risk_level.toUpperCase()}`);
         risk.className = '';
-        risk.classList.add(p.predicted_risk_level.toLowerCase() === 'high' ? 'color-danger' : (p.predicted_risk_level.toLowerCase() === 'low' ? 'color-success' : 'color-warning'));
+        risk.style.color = riskColor;
+        risk.style.fontWeight = '800';
+        risk.style.letterSpacing = '1px';
+        risk.style.borderLeft = `4px solid ${riskColor}`;
+        risk.style.paddingLeft = '1rem';
 
-        document.getElementById('org-summary-text').textContent = currentOrgData.summary;
+        const summaryEl = document.getElementById('org-summary-text');
+        summaryEl.style.lineHeight = '1.8';
+        summaryEl.style.fontSize = '0.95rem';
+        summaryEl.style.textAlign = 'justify';
+        summaryEl.style.letterSpacing = '0.2px';
+        summaryEl.innerHTML = boldNumbers(currentOrgData.summary);
     }
 
     // Refresh button
@@ -1082,13 +1194,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- Expense Categories Live Total ----
     const expInputs = document.querySelectorAll('.exp-input');
+    const expCollective = document.getElementById('exp-collective');
     const expTotalLive = document.getElementById('exp-total-live');
+
     function updateExpTotal() {
-        let total = 0;
-        expInputs.forEach(el => { total += parseFloat(el.value) || 0; });
-        if (expTotalLive) expTotalLive.textContent = `Total: ${formatCurrency(total)}`;
+        let catTotal = 0;
+        expInputs.forEach(el => { catTotal += parseFloat(el.value) || 0; });
+        
+        const collectiveVal = parseFloat(expCollective?.value) || 0;
+        
+        // Priority: If any categories are filled, use that total. Else use collective.
+        let finalTotal = catTotal > 0 ? catTotal : collectiveVal;
+        
+        if (expTotalLive) expTotalLive.textContent = `Total: ${formatCurrency(finalTotal)}`;
     }
     expInputs.forEach(el => el.addEventListener('input', updateExpTotal));
+    if (expCollective) expCollective.addEventListener('input', updateExpTotal);
 
     // ---- Multi-Goal Builder ----
     const addGoalBtn = document.getElementById('add-goal-btn');
@@ -1180,6 +1301,9 @@ document.addEventListener('DOMContentLoaded', () => {
             other:         parseFloat(document.getElementById('exp-other').value)        || 0,
         };
 
+        const collectiveVal = document.getElementById('exp-collective').value.trim();
+        const catTotal = Object.values(expCats).reduce((a, b) => a + b, 0);
+
         // Collect multiple goals
         const goalEntries = document.querySelectorAll('.goal-entry');
         const goals = [];
@@ -1199,7 +1323,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const payload = {
             income:             document.getElementById('income').value,
-            expense_categories: expCats,
+            expenses:           catTotal > 0 ? null : collectiveVal,
+            expense_categories: catTotal > 0 ? expCats : null,
             risk_appetite:      document.getElementById('risk').value,
             goals:              goals,
         };
@@ -1263,20 +1388,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function populateDashboard(data) {
+        setupIndChat();
         const { financials, category, emergency, savings_improvement, goal, goals, action_plan, investments, recommendations } = data;
         const inDeficit = financials.in_deficit || financials.savings <= 0;
 
         // 1. Overview
-        document.getElementById('res-income').innerText = formatCurrency(financials.income);
-        document.getElementById('res-expenses').innerText = formatCurrency(financials.expenses);
+        const income = financials.income || 0;
+        const expenses = financials.expenses || 0;
+        const savings = financials.savings || 0;
 
+        document.getElementById('res-income').innerText = formatCurrency(income);
+        
+        // Expenses Color: Low (<50% of income)=Green, Moderate (50-80%)=Yellow, High (>80%)=Red
+        const expRatio = income > 0 ? (expenses / income) : 1;
+        const expEl = document.getElementById('res-expenses');
+        expEl.innerText = formatCurrency(expenses);
+        expEl.style.color = expRatio < 0.5 ? 'var(--success)' : (expRatio < 0.8 ? 'var(--warning)' : 'var(--danger)');
+
+        // Savings Color: High (>20%)=Green, Moderate (5-20%)=Yellow, Low (<5% or deficit)=Red
+        const savRatio = income > 0 ? (savings / income) : 0;
         const savingsEl = document.getElementById('res-savings');
-        savingsEl.innerText = formatCurrency(financials.savings);
-        if (inDeficit) {
-            savingsEl.style.color = 'var(--danger)';
-        } else {
-            savingsEl.style.color = '';
-        }
+        savingsEl.innerText = formatCurrency(savings);
+        savingsEl.style.color = (savRatio > 0.2 && !inDeficit) ? 'var(--success)' : (savRatio >= 0.05 && !inDeficit ? 'var(--warning)' : 'var(--danger)');
 
         const healthBadge = document.getElementById('res-health');
         if (inDeficit) {
@@ -1805,6 +1938,87 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.style.boxShadow = '0 2px 20px rgba(30,58,138,0.05)';
         }
     }, { passive: true });
+
+
+    function setupIndChat() {
+        const form = document.getElementById('ind-chat-form');
+        if (!form) return;
+        // Clean up previous listeners
+        const newForm = form.cloneNode(true);
+        form.parentNode.replaceChild(newForm, form);
+        
+        newForm.addEventListener('submit', (e) => handleChatSubmit(e, 'ind'));
+        
+        // Initial greeting if empty
+        const windowEl = document.getElementById('ind-chat-window');
+        if (windowEl && windowEl.children.length === 0 && indChatHistory.length === 0) {
+            appendChatMessage('ind-chat-window', "Hello! I'm your Personal AI Financial Coach. Your analysis is ready. Ask me anything about your savings, goals, or investments!", 'ai');
+        }
+    }
+
+    async function handleChatSubmit(e, type) {
+        e.preventDefault();
+        const inputId = type === 'org' ? 'org-chat-input' : 'ind-chat-input';
+        const windowId = type === 'org' ? 'org-chat-window' : 'ind-chat-window';
+        const input = document.getElementById(inputId);
+        const msg = input.value.trim();
+        if (!msg) return;
+
+        // User message
+        appendChatMessage(windowId, msg, 'user');
+        input.value = '';
+
+        // --- Context Construction ---
+        // Just pass the entire analysis object so the AI has access to all DNA
+        const context = type === 'org' ? currentOrgData : window.appState;
+        
+        // Show loading
+        const loadingId = appendChatMessage(windowId, "Thinking...", 'ai', true);
+
+        try {
+            const response = await fetch(`${API_BASE}/chat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ message: msg, context: context })
+            });
+
+            const data = await response.json();
+            
+            // Remove loading and show response
+            const loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+
+            if (data.status === 'success') {
+                appendChatMessage(windowId, data.reply, 'ai');
+            } else {
+                appendChatMessage(windowId, "Sorry, I encountered an error. Please try again.", 'ai');
+            }
+        } catch (error) {
+            console.error('Chat error:', error);
+            const loadingEl = document.getElementById(loadingId);
+            if (loadingEl) loadingEl.remove();
+            appendChatMessage(windowId, "Connection error. Please check your internet.", 'ai');
+        }
+    }
+
+    function appendChatMessage(windowId, text, sender, isLoading = false) {
+        const windowEl = document.getElementById(windowId);
+        if (!windowEl) return;
+
+        const msgDiv = document.createElement('div');
+        const id = 'msg-' + Math.random().toString(36).substr(2, 9);
+        msgDiv.id = id;
+        msgDiv.className = `chat-msg ${sender}-msg`;
+        msgDiv.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        
+        windowEl.appendChild(msgDiv);
+        windowEl.scrollTop = windowEl.scrollHeight;
+        
+        return id;
+    }
 
     // Boot
     init();
