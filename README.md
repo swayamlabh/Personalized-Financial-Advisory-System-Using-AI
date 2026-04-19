@@ -125,7 +125,7 @@ Database
 
 1️⃣ Clone the Repository
 
-git clone https://github.com/YOUR_REPO_LINK
+[git clone https://github.com/YOUR_REPO_LINK](https://github.com/swayamlabh/Personalized-Financial-Advisory-System-Using-AI)
 cd YOUR_PROJECT
 
 ---
